@@ -56,7 +56,7 @@ def main():
     predicates = loadTextfile(file)
     finalCNF = []
     for i in range(0, len(predicates)):
-        if i != len(predicates):
+        if i == (len(predicates)-1):
             predicates[i] = convertConclusion(predicates[i])
         finalCNF += CNF(predicates[i])
     
