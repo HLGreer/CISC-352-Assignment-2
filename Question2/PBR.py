@@ -44,7 +44,7 @@ def main():
     predicates = loadTextfile("textfile.txt")
     for i in range(0,len(predicates)):
         if i != len(predicates):
-            predicates[i] = negateConclusion(predicates[i])
+            predicates[i] = convertConclusion(predicates[i])
         predicates[i] = CNF(predicates[i])
 
 
