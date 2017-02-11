@@ -36,7 +36,11 @@ def convertConclusion(conclusion):
     return conclusion
 
 #coded by other group
-#note to other group: return as lowercase plz
+#notes to other group:
+# return as lowercase plz
+# no whitespace
+# individual atoms in brackets
+# i.e.) {(a,b),(c,!d),(a)}
 def CNF(predicate):
     return
 
