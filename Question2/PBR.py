@@ -27,7 +27,13 @@ def readInput():
 
 # Convert the string returned from the CNF function to the
 def cnfToList(cnfStr):
-    pass
+    noSquigMatch = re.match(r'\{(.*)\}', cnfStr)
+    noSquig = noSquigMatch.group(1)
+    splitArr = re.findall(r'\(([^)]*)\)', noSquig)
+    for i in range(0,len(splitArr)):
+        splitArr[i] = splitArr[i].split(',')
+    return splitArr
+        
 
 # Conclusion is a string with a "Therefore, " statement (any case)
 def convertConclusion(conclusion):
