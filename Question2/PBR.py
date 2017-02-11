@@ -5,7 +5,7 @@ For CISC 352, Winter 2017
 Assignment 2 - Proof by Refutation
 '''
 
-import re
+import re, glob
 
 def loadTextfile(textfile):
     with open(textfile) as f:
@@ -51,7 +51,9 @@ def CNF(predicate):
     return
 
 def main():
-    predicates = loadTextfile("textfile.txt")
+    txtFiles = glob.glob('./*.txt')
+    file = txtFiles[0]
+    predicates = loadTextfile(file)
     for i in range(0,len(predicates)):
         if i != len(predicates):
             predicates[i] = convertConclusion(predicates[i])
