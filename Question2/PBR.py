@@ -25,3 +25,10 @@ def readInput():
             # stop taking input
 '''
 
+# Convert the string returned from the CNF function to the
+def cnfToList(cnfStr):
+    pass
+
+def negateConclusion(conclusion):
+    pass
+
