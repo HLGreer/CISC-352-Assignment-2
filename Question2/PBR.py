@@ -50,8 +50,13 @@ def convertConclusion(conclusion):
 def CNF(predicate):
     return
 
-def dpll(F, U):
-    pass
+def dpll(F):
+    F = unitProp(F)
+    if len(F)==1 and f[0]==[]:
+        return False
+    else:
+        return True
+    
 
 def unit_propagate(F, U):
     pass
@@ -65,7 +70,7 @@ def main():
         if i == (len(predicates)-1):
             predicates[i] = convertConclusion(predicates[i])
         finalCNF += CNF(predicates[i])
-    
+    sat = dpll(finalCNF)
 
 
 if __name__ == "__main__":
