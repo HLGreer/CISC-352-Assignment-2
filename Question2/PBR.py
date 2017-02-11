@@ -29,6 +29,9 @@ def readInput():
 def cnfToList(cnfStr):
     pass
 
-def negateConclusion(conclusion):
-    pass
+# Conclusion is a string with a "Therefore, " statement (any case)
+def convertConclusion(conclusion):
+    conclusion = conclusion.lower()
+    conclusion.replace("therefore, ", "")
+    return conclusion
 
