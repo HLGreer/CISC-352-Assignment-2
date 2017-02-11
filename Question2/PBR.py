@@ -52,8 +52,8 @@ def CNF(predicate):
 
 def main():
     txtFiles = glob.glob('./*.txt')
-    file = txtFiles[0]
-    predicates = loadTextfile(file)
+    fileIn = txtFiles[0]
+    predicates = loadTextfile(fileIn)
     finalCNF = []
     for i in range(0, len(predicates)):
         if i == (len(predicates)-1):
