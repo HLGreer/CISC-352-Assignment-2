@@ -67,17 +67,18 @@ def dpll(F):
 
 
 def unit_propagate(F):
-    l = ""
     hasUnit = True
     while hasUnit:
+        l=""
         for i in range(0,len(F)):
             if len(F[i]) == 1:
                 l = F[i][0]
+                print l
                 break
-            elif i == (len(F) - 1):
-                hasUnit = False
+        if l == "":
+            hasUnit = False
         if(hasUnit):
-            remove_unit(F,l)
+            F = remove_unit(F,l)
     return F
 
 def remove_unit(F,l):
@@ -91,8 +92,7 @@ def remove_unit(F,l):
             outF = outF.append(clause)
         elif negL in clause:
             clause[:] = [x for x in clause if x != negL]
-            if(clause != []):
-                outF.append(clause)
+            outF.append(clause)
     return outF
 
 def main():
@@ -105,7 +105,6 @@ def main():
             predicates[i] = convertConclusion(predicates[i])
         finalCNF += CNF(predicates[i])
     sat = dpll(finalCNF)
-
 
 
 if __name__ == "__main__":
