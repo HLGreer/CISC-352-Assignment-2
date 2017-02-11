@@ -60,15 +60,40 @@ def dpll(F):
     FsubL = remove_unit(F,l)
     if len(l)==2:
         negL = l[1]
-    else: 
+    else:
         negL = "!"+l
     FsubNL = remove_unit(F,negL)
     return dpll(FsubL) or dpll(FsubNL)
-    
 
 
 def unit_propagate(F):
-    pass
+    l = ""
+    hasUnit = True
+    while hasUnit:
+        for i in range(0,len(F)-1):
+            if len(F[i]) == 1:
+                l = F[i][0]
+                break
+            elif i == (len(F) - 1):
+                hasUnit = False
+        if(hasUnit):
+            remove_unit(F,l)
+    return F
+
+def remove_unit(F,l):
+    outF = []
+    if len(l) > 1:
+        negL = l[1]
+    else:
+        negL = '!' + l
+    for clause in F:
+        if l not in clause and negL not in clause:
+            outF = outF.append(clause)
+        elif negL in clause:
+            clause[:] = [x for x in clause if x != negL]
+            if(clause != []):
+                outF.append(clause)
+    return outF
 
 def main():
     txtFiles = glob.glob('./*.txt')
@@ -80,6 +105,7 @@ def main():
             predicates[i] = convertConclusion(predicates[i])
         finalCNF += CNF(predicates[i])
     sat = dpll(finalCNF)
+    
 
 
 if __name__ == "__main__":
