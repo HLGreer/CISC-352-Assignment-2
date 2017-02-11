@@ -35,3 +35,19 @@ def convertConclusion(conclusion):
     conclusion.replace("therefore, ", "")
     return conclusion
 
+#coded by other group
+#note to other group: return as lowercase plz
+def CNF(predicate):
+    return
+
+def main():
+    predicates = loadTextfile("textfile.txt")
+    for i in range(0,len(predicates)):
+        if i != len(predicates):
+            predicates[i] = negateConclusion(predicates[i])
+        predicates[i] = CNF(predicates[i])
+
+
+
+if __name__ == "__main__":
+    main()
