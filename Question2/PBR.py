@@ -50,6 +50,12 @@ def convertConclusion(conclusion):
 def CNF(predicate):
     return
 
+def dpll(F, U):
+    pass
+
+def unit_propagate(F, U):
+    pass
+
 def main():
     txtFiles = glob.glob('./*.txt')
     file = txtFiles[0]
