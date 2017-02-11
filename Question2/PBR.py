@@ -70,7 +70,7 @@ def unit_propagate(F):
     l = ""
     hasUnit = True
     while hasUnit:
-        for i in range(0,len(F)-1):
+        for i in range(0,len(F)):
             if len(F[i]) == 1:
                 l = F[i][0]
                 break
@@ -105,7 +105,7 @@ def main():
             predicates[i] = convertConclusion(predicates[i])
         finalCNF += CNF(predicates[i])
     sat = dpll(finalCNF)
-    
+
 
 
 if __name__ == "__main__":
