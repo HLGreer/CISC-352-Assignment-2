@@ -54,11 +54,12 @@ def main():
     txtFiles = glob.glob('./*.txt')
     file = txtFiles[0]
     predicates = loadTextfile(file)
-    for i in range(0,len(predicates)):
+    finalCNF = []
+    for i in range(0, len(predicates)):
         if i != len(predicates):
             predicates[i] = convertConclusion(predicates[i])
-        predicates[i] = CNF(predicates[i])
-
+        finalCNF += CNF(predicates[i])
+    
 
 
 if __name__ == "__main__":
