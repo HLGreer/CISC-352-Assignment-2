@@ -51,14 +51,23 @@ def CNF(predicate):
     return
 
 def dpll(F):
-    F = unitProp(F)
-    if len(F)==1 and f[0]==[]:
+    F = unit_propagate(F)
+    if len(F)==1 and F[0]==[]:
         return False
     else:
         return True
+    l = F[0][0]
+    FsubL = remove_unit(F,l)
+    if len(l)==2:
+        negL = l[1]
+    else: 
+        negL = "!"+l
+    FsubNL = remove_unit(F,negL)
+    return dpll(FsubL) or dpll(FsubNL)
     
 
-def unit_propagate(F, U):
+
+def unit_propagate(F):
     pass
 
 def main():
