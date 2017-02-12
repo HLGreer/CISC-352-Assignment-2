@@ -14,19 +14,6 @@ def loadTextfile(textfile):
         line = line.lower()
     return lines
 
-
-'''
-# We may need to read in from the stdin input?
-def readInput():
-    # until the therefore is read, just grab each item and send to CNF
-    end = False
-    while end == False:
-        theInput = raw_input(">")
-        match = re.match(r'therefore(.*)', theInput.lower())
-        if match: # If the input contains the Therefore statement
-            # stop taking input
-'''
-
 # Convert the string returned from the CNF function to the
 def cnfToList(cnfStr):
     noSquigMatch = re.match(r'\{(.*)\}', cnfStr)
@@ -45,21 +32,12 @@ def cnfToList(cnfStr):
 def CNF(predicate):
     return
 
-def dpll(F):
-    F = unit_propagate(F)
-    if len(F)==1 and F[0]==[]:
-        return False
-    else:
-        return True
-    l = F[0][0]
-    FsubL = remove_unit(F,l)
-    if len(l)==2:
+def negateL(l):
+    if len(l) > 1:
         negL = l[1]
     else:
-        negL = "!"+l
-    FsubNL = remove_unit(F,negL)
-    return dpll(FsubL) or dpll(FsubNL)
-
+        negL = '!' + l
+    return negL
 
 def unit_propagate(F):
     hasUnit = True
@@ -78,10 +56,7 @@ def unit_propagate(F):
 
 def remove_unit(F,l):
     outF = []
-    if len(l) > 1:
-        negL = l[1]
-    else:
-        negL = '!' + l
+    negL = negateL(l)
     for clause in F:
         if l not in clause and negL not in clause:
             outF = outF.append(clause)
@@ -90,6 +65,18 @@ def remove_unit(F,l):
             outF.append(clause)
     return outF
 
+def dpll(F):
+    F = unit_propagate(F)
+    if len(F)==1 and F[0]==[]:
+        return False
+    elif F==[]:
+        return True
+    l = F[0][0]
+    negL = negateL(l)
+    FsubL = remove_unit(F,l)
+    FsubNL = remove_unit(F,negL)
+    return dpll(FsubL) or dpll(FsubNL)
+
 def main():
     txtFiles = glob.glob('./*.txt')
     fileIn = txtFiles[0]
@@ -97,11 +84,18 @@ def main():
     finalCNF = []
     concRE = re.compile('Therefore\,\s+(.*)\.')
     for i in range(0, len(predicates)):
-        conclusion = concRE.match(predicates[i])
+        conclusion = concRE.match(predicates[i]) #check if matches regex for conclusion.
         if conclusion:
-            predicates[i] = "!(" + conclusion.group(1) + ")"
+            predicates[i] = "!(" + conclusion.group(1) + ")" #Negate the conclusion
         finalCNF += CNF(predicates[i])
     sat = dpll(finalCNF)
+    outFile = open("out.txt","w")
+    if sat:
+        outFile.write("The conclusion does not follow logically from the premises.")
+    else:
+        outFile.write("The conclusion follows logically from the premises.")
+    outFile.close()
+    print "Result stored in out.txt"
 
 
 if __name__ == "__main__":
