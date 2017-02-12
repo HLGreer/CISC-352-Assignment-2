@@ -10,6 +10,8 @@ import re, glob
 def loadTextfile(textfile):
     with open(textfile) as f:
         lines = f.read().splitlines()
+    for line in lines:
+        line = line.lower()
     return lines
 
 
@@ -33,13 +35,6 @@ def cnfToList(cnfStr):
     for i in range(0,len(splitArr)):
         splitArr[i] = splitArr[i].split(',')
     return splitArr
-        
-
-# Conclusion is a string with a "Therefore, " statement (any case)
-def convertConclusion(conclusion):
-    conclusion = conclusion.lower()
-    conclusion.replace("therefore, ", "")
-    return conclusion
 
 #coded by other group
 #notes to other group:
@@ -100,9 +95,11 @@ def main():
     fileIn = txtFiles[0]
     predicates = loadTextfile(fileIn)
     finalCNF = []
+    concRE = re.compile('Therefore\,\s+(.*)\.')
     for i in range(0, len(predicates)):
-        if i == (len(predicates)-1):
-            predicates[i] = convertConclusion(predicates[i])
+        conclusion = concRE.match(predicates[i])
+        if conclusion:
+            predicates[i] = "!(" + conclusion.group(1) + ")"
         finalCNF += CNF(predicates[i])
     sat = dpll(finalCNF)
 
