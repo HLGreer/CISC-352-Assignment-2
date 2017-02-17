@@ -490,7 +490,7 @@ def convertToCNF(input):
         input = distributeOrRule(input)
         print ("result after distribute or rule: " + input)
 
-    return convertToClause(input)
+    return input
 
 # converts to clause form
 
@@ -562,6 +562,7 @@ def main():
             break
 
         outputFormula = convertToCNF(inputFormula)
+        outputFormula = convertToClause(outputFormula)
         print("Output formula: " + outputFormula + "\n")
 
 main()
