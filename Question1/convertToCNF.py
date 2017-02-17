@@ -1,13 +1,57 @@
-print ("hello")
-
 # CLOSE_BRACKET = ")"
 # OPEN_BRACKET = "("
 
-def removeWhitespace():
-  return
+def removeWhitespace(sentence):
+  stack, out, s = [], [], []
+  precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
+  sentence = sentence.replace(' ', '')
+  i = 0
+  while(i < len(sentence)):
+      if(sentence[i] != '-' and sentence[i] != '<'):
+          s.append(sentence[i])
+          i += 1
+      elif(sentence[i] == '-'):
+          s.append('->')
+          i += 2
+      elif(sentence[i] == '<'):
+          s.append('<->')
+          i += 3
+  for token in s :
+      if(token not in precedence):
+          out.append(token)
+      else:
+          while(stack and precedence[token] < precedence[stack[0]]):
+              out.append(stack.pop(0))
+          stack.insert(0, token)    
+  while(stack):
+      out.append(stack.pop(0))
+  return out
+
 
 def groupByOperatorPrecedence():
-  return
+  stack, out, ops = [], [], ['!', '^', 'v', '->', '<->']
+  for token in str:
+      if(token not in ops):
+          stack.append(token)
+      else:
+          if(token == '!'):
+              unit = token + stack.pop()
+          else:
+             unit = '(' + stack.pop(-2) + token + stack.pop() + ')'
+          stack.append(unit)
+  s = stack[0]
+  s = s[1:-1]
+  return s
+
+# Adds precedence brackets to an infix sentence
+def bracket():
+  filename = 'text.txt'
+  with open(filename) as f:
+      sentence = f.readlines()
+  sentence = sentence[0].strip()
+  str = removeWhitespace(sentence)
+  s = groupByOrperatorPrecedence(str)
+  return s
 
 # can't assume that no double negation
 
@@ -53,7 +97,7 @@ def findRightmostClause(string):
         countBrackets += 1
 
     #should have returned in loop above, otherwise error
-    print "***ERROR in findRightmostClause function"
+    print("***ERROR in findRightmostClause function")
 
   # else, return the entire string as a clause
   else:
@@ -79,7 +123,7 @@ def findLeftmostClause(string):
         countBrackets += 1
 
     #should have returned in loop above, otherwise error
-    print "***ERROR in findLeftmostClause function"
+    print("***ERROR in findLeftmostClause function")
   # else, return the entire string as a clause
   else:
     return string
@@ -119,7 +163,7 @@ def checkIfSurroundedByBrackets(string, index):
   elif clauseStartIndex == None and clauseEndIndex == None:
     return None
   else:
-    print "***ERROR in checkIfSurroundedByBrackets"
+    print("***ERROR in checkIfSurroundedByBrackets")
     return
 
 
@@ -265,46 +309,189 @@ def doubleNegationRule(input):
    #return
    return input
 
-def distributeOrRule():
-  return
+def isDistributionCandidate(input):
+  findOr = input.find("v(")
+  findOr2 = input.find(")v")
 
-def convertToClausalForm():
-  return
+  if findOr == -1 and findOr2 == -1:
+    return False
+
+  for i in range(input.find("v("),len(input)):
+    if input[i] == ")":
+      flag = False
+    elif input[i] == "^":
+      return True
+     
+  for i in range(input.find(")v"), 0, -1):
+    if input[i] == "(":
+      return False
+    elif input[i] == "^":
+      return True
+  return flag
+
+
+def distributeOrRule(input):
+  while isDistributionCandidate(input):
+    count = 0
+    findOr = input.find("v(")
+    findOr2 = input.find(")v")
+
+    #Case 1 - Av(B^C)
+    #The v is in front and has an atom
+    if findOr >=0 and input[findOr-1] != ")":
+      atom = input[findOr-1]
+      location = findOr
+      atomList = []
+      for i in range(location,len(input)):
+        if input[i] == "(":
+          start = i
+          count+=1
+        elif input[i] == ")":
+          count-=1
+          if count == 0:
+            end = i
+            break
+        elif input[i] == "^":
+          input = input[0:location-1] + "(" + atom + "v" + input[i-1] + ")" + "^(" + atom + "v" + input[i+1:]
+          return input
+      return input
+        
+"""
+def distributeOrRule(input):
+    while(isDistributionCandidate(input)):
+      i = 0
+      for character in input:
+        if character == 'v':
+          operatorIndex = i
+          operatorInClause = checkIfSurroundedByBrackets(input, operatorIndex)
+          #print(operatorIndex)
+          if operatorInClause == None: #if not in brackets:
+            A = input[0 : operatorIndex]
+            B = input[operatorIndex + 1 : len(input)]
+            if input[operatorIndex - 1] == ')' and input[operatorIndex + 1] != '(':
+              A = A[1 : -1]
+              A = convertToCNF(A)
+              output = ""
+              while (A.count("^") > 0):
+                operatorIndex2 = A.find("^")
+                output = output + A[0:operatorIndex2] + "v" + B + "^"
+                A = A[operatorIndex2 + 1: len(A)]
+              output = output + A + "v" + B
+              return output
+            elif input[operatorIndex - 1] != ')' and input[operatorIndex + 1] == '(':
+              B = B[1 : -1]
+              #print(B)
+              B = convertToCNF(B)
+              #print(B)
+              output = ""
+              while (B.count("^") > 0):
+                operatorIndex2 = B.find("^")
+                output = output + A + "v" + B[0:operatorIndex2] + "^"
+                B = B[operatorIndex2 + 1: len(B)]
+              output = output + A + "v" + B
+              return output
+            else:
+              i = i + 1
+              continue
+          else:
+            i = i + 1
+            continue
+        else:
+          i = i + 1
+          continue
+
+    #return output
+"""
 
 def convertToCNF(input):
-  print ("input string: " + input)
-  #input is string, grouped by operator precedence (with brackets) and whitespace removed
+    if "<->" in input:
+        input = iffRule(input)
+        print ("result after iff rule: " + input)
 
-  if "<->" in input:
-    input = iffRule(input)
-    print ("result after iff rule: " + input)
+    if "->" in input:
+        input = implicationRule(input)
+        print ("result after implication rule: " + input)
 
-  if "->" in input:
-    input = implicationRule(input)
-    print ("result after implication rule: " + input)
-
-  if "!(" in input:
-    input = propagateNot(input)
-    print ("result after not propagation: " + input)
-  
+    if "!(" in input:
+        input = propagateNot(input)
+        print ("result after not propagation: " + input)
     
-  if "!!" in input:
-    input = doubleNegationRule(input)
-    print ("result after double negation rule: " + input)
-  return
+    if "!!" in input:
+        input = doubleNegationRule(input)
+        print ("result after double negation rule: " + input)
 
-#input1 = "((A^B)vC)->D"
-#input2 = "Av(B^c)"
-#input3 = "A<->B"
-#input4 = "(A<->B)"
-#input5 = "A<->B<->C" #would not be tested; this would be in brackets after emerson's function
-#input5 = "A<->(B<->C)"
-#input6 = "A->B"
-#input7 = "(A->B)"
+    if isDistributionCandidate(input):
+        input = distributeOrRule(input)
+        print ("result after distribute or rule: " + input)
 
-#input8 = "!!(A v !B) ^ !!B"
-#input9 = "!(AvB^C^(!DvE)^!F)"
-#input10 = "(!(A^B)^!C)vD"
-#input11 = "((!Av!B)^!C)vD"
-#input12 = "(!(A^B)^!(AvC)vD)^(!(AvB)vG)"
-convertToCNF(input12)
+    return convertToClause(input)
+
+#converts to clause form
+def convertToClause(cnf):
+  #flag
+  opened = False
+  
+  #initial {
+  output="{"
+  #loop through the expression
+  for i in range(len(cnf)):
+    #if it isnt v or ^, check for brackets or add atom
+    if cnf[i] != "v" and cnf[i] != "^":
+      #if it is an open bracket, check if we should include it
+      if cnf[i] == "(":
+        #check if we already opened a bracket or if the next element is a bracket
+        if opened or cnf[i+1] == "(":
+          #skip this one, we dont want 2
+          pass
+
+        #Checks if the expression is in the form: (A), skips bracket
+        elif len(range(i,cnf.find(")", i))) == 2:
+          pass
+
+        #Adds the bracket if we need one and sets the flag to true
+        else:
+          output += "("
+          opened = True
+
+      #Check for closed brackets
+      elif cnf[i] == ")":
+        #If we opened a bracket and we are at the end, or at an ^ add it
+        if opened and (i == len(cnf)-1 or cnf[i+1] == "^"):
+          output += ")"
+        #otherwise we dont want it
+        else:
+          pass
+
+      #Adds the atoms
+      else:
+        output += cnf[i]
+        
+    #it is v make it a comma but dont change flags as we are inside the brackets
+    elif cnf[i] == "v":
+      output += ","
+      
+    #it is an ^, we can add a comma and reset brackets
+    else:
+      output += ","
+      opened = False
+      closed = False
+      
+  #add last } and return
+  output+="}"
+
+  #output = cleanUp(output)
+  return output
+
+    
+
+def main():
+    while True:
+        inputFormula = input("Input formula: ")
+        if inputFormula == "quit":
+            print("Ending program.")
+            break
+
+        outputFormula = convertToCNF(inputFormula)
+        print("Output formula: " + outputFormula + "\n")
+
+main()
