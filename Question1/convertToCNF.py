@@ -3,6 +3,8 @@ def removeWhitespace(sentence):
     stack, out, s = [], [], []
     precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
     sentence = sentence.replace(' ', '')
+    if(sentence[1] == '('):
+        return sentence
     i = 0
     while(i < len(sentence)):
         if(sentence[i] != '-' and sentence[i] != '<'):

@@ -5,6 +5,8 @@ def shunting(sentence):
     stack, out, s = [], [], []
     precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
     sentence = sentence.replace(' ', '')
+    if(sentence[0] == '('):
+        return sentence
     i = 0
     while(i < len(sentence)):
         if(sentence[i] != '-' and sentence[i] != '<'):
@@ -46,12 +48,14 @@ def infix(str):
 
 # Adds precedence brackets to an infix sentence
 def bracket():
-    filename = 'text.txt'
+    filename = 'cnf.txt'
     with open(filename) as f:
         sentence = f.readlines()
     sentence = sentence[0].strip()
     str = shunting(sentence)
-    s = infix(str)
-    return s
+    if(str[0] != '('):
+        s = infix(str)
+    else:
+        return str
 
 print(bracket())
