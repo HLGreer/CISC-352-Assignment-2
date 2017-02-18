@@ -1,4 +1,3 @@
-
 def removeWhitespace(sentence):
     stack, out, s = [], [], []
     precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
