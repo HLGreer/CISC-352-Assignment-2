@@ -53,6 +53,7 @@ def initiate(filename):
     str = removeWhitespace(sentence)
     if(str[0] != '('):
         s = groupByOperatorPrecedence(str)
+        return s
     else:
         return str
 
