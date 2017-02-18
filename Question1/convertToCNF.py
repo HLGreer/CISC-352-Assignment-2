@@ -1,7 +1,5 @@
 # CLOSE_BRACKET = ")"
 # OPEN_BRACKET = "("
-
-
 def removeWhitespace(sentence):
     stack, out, s = [], [], []
     precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
@@ -47,7 +45,7 @@ def groupByOperatorPrecedence():
 # Adds precedence brackets to an infix sentence
 
 
-def bracket():
+def initiate():
     filename = 'text.txt'
     with open(filename) as f:
         sentence = f.readlines()
@@ -303,14 +301,22 @@ def propagateNot(input):
 def addNot(input):
     # create a list for storing atoms
     notList = []
+    #this will be used to store the letters of each word
+    word = ""
     # loop through the sequence provided (in between brackets)
     for i in range(len(input)):
         # If the character is not a symbol, add it to our list
-        if input[i] != "(" and input[i] != ")" and input[i] != "^" and input[i] != "v" and input[i] != "!":
-            #print (input[i])
-            # append the atom to our list
-            notList.append(input[i])
-    # print(notList)
+        #if input[i] != "(" and input[i] != ")" and input[i] != "^" and input[i] != "v" and input[i] != "!":
+        #If we have and or or, or we are at the end of the expression, add the word we built
+        if input[i] == "v" or input[i] == "^" or i == (len(input)-1):
+            #print("added: " + word)
+            notList.append(word)
+            word=""
+        #It is a letter or atom, store it in the word
+        elif input[i] != "(" and input[i] != ")" and input[i] != "!":
+                word += input[i]
+                
+    #print(notList)
 
     # loop through the atoms in our list that need an ! added
     for i in range(len(notList)):
@@ -330,28 +336,81 @@ def doubleNegationRule(input):
     # return
     return input
 
+# Checks if or distribution is needed
+
 
 def isDistributionCandidate(input):
+    # find both ways
     findOr = input.find("v(")
     findOr2 = input.find(")v")
 
+    # Check if either are there
     if findOr == -1 and findOr2 == -1:
         return False
-
+    # Go through and see if ^ is there
     for i in range(input.find("v("), len(input)):
+        # if we reached ), set flag to flase but don't return
+        # There still may be other brackets
         if input[i] == ")":
             flag = False
+        # if ^ is inside brackets with v outside, true
         elif input[i] == "^":
             return True
-
+    # go reverse to check for )v
     for i in range(input.find(")v"), 0, -1):
+        # if we reached ( set the flag but dont end
         if input[i] == "(":
-            return False
+            flag = False
+        # we found a ^ so true
         elif input[i] == "^":
             return True
     return flag
 
+"""
+def distributeOrRule(input):
+    # while there are still nots needing to be propagated
+    while isDistributionCandidate(input):
+        # setup a counter for brackets
+        count = 0
+        # get the location of the first one
+        location = input.find("v(")
+        atom = input[location-1]
+        # remove the not before the bracket, keep the bracket
+        input = input[0:location-1] + input[location + 1] + \
+            input[location + 2:len(input)]
+        print(input)
 
+        
+        # loop through the open bracket, starting at the location of !(
+        
+        for i in range(location, len(input)):
+            # if we open more brackets, add to the count
+            if input[i] == "(":
+                count += 1
+
+            # if we close a bracket, remove from the count
+            elif input[i] == ")":
+                count -= 1
+
+                # if we have no more brackets we are done with this iteration
+                # store the end location so we know how far to add negations
+                if count == 0:
+                    endLocation = i
+                    while input.find("^",location,endLocation):
+                        if input[i] == "^":
+                            input = input[0:i-1] + "(" + atom + "v" + input[i-1] +")"+ "^" + input[i + 1:len(input)]
+                    
+
+            # If there is an ^, change it to v
+            
+
+            # If there is an v, change it to ^
+            #elif input[i] == "v":
+                #input = input[0] + input[1:i] + "^" + input[i + 1:len(input)]
+    return input
+
+"""
+"""
 def distributeOrRule(input):
     while isDistributionCandidate(input):
         count = 0
@@ -363,23 +422,14 @@ def distributeOrRule(input):
         if findOr >= 0 and input[findOr - 1] != ")":
             atom = input[findOr - 1]
             location = findOr
-            atomList = []
             for i in range(location, len(input)):
-                if input[i] == "(":
-                    start = i
-                    count += 1
-                elif input[i] == ")":
-                    count -= 1
-                    if count == 0:
-                        end = i
-                        break
-                elif input[i] == "^":
-                    input = input[0:location - 1] + "(" + atom + "v" + input[
-                        i - 1] + ")" + "^(" + atom + "v" + input[i + 1:]
-                    return input
+                if input[i] == "^":
+                    #input = input[0:location - 1] + "(" + atom + "v" + input[i - 1] + ")" + "^(" + atom + "v" + input[i + 1:]
+                    print(input[0:location-1] + )
             return input
 
 """
+
 def distributeOrRule(input):
   
   while(input.count("v") > 0):
@@ -393,42 +443,40 @@ def distributeOrRule(input):
           A = input[0 : operatorIndex]
           B = input[operatorIndex + 1 : len(input)]
           if input[operatorIndex - 1] == ')' and input[operatorIndex + 1] == '(':
+            A = convertToCNF(A)
+            B = convertToCNF(B)
             A = A[1 : -1]
             B = B[1 : -1]
-            print(A)
-            print(B)
-            A = distributeOrRule(A)
-            print(A)
-            B = distributeOrRule(B)
-            print(B)
+            #print(A)
+            #print(B)
             if (A.count("^") == 0 and B.count("^") == 0):
-              output = A+"v"+B
+              output = "(" + A + "v" + B + ")"
             elif (A.count("^") == 0 and B.count("^") > 0):
               output = ""
               while(B.count("^") > 0):
-                output = output + A + "v" + B[0:B.find("^")] + "^"
+                output = output + "(" + A + "v" + B[0:B.find("^")] + ")" + "^"
                 B = B[(B.find("^"))+1:]
-              output = output + A + "v" + B
+              output = output + "(" + A + "v" + B + ")"
             elif (A.count("^") > 0 and B.count("^") == 0):
               output = ""
               while(A.count("^") > 0):
-                output = output + A[A.find("^")-1] + "v" + B + "^"
+                output = output + "(" + A[A.find("^")-1] + "v" + B + ")" + "^"
                 A = A[(A.find("^"))+1:]
-              output = output + A + "v" + B
+              output = output + "(" + A + "v" + B + ")"
             elif (A.count("^") > 0 and B.count("^") > 0):
               output = ""
               while(A.count("^") > 0):
                 temp = B
                 while(temp.count("^") > 0):
-                  output = output + A[0:A.find("^")] + "v" + temp[0:temp.find("^")] + "^"
+                  output = output + "(" + A[0:A.find("^")] + "v" + temp[0:temp.find("^")] + ")" + "^"
                   temp = temp[(temp.find("^"))+1:]
-                output = output + A[0:A.find("^")] + "v" + temp + "^"
+                output = output + "(" + A[0:A.find("^")] + "v" + temp + ")" + "^"
                 A = A[(A.find("^"))+1:] #A reaches one last
               #output = output + "^"
               while(B.count("^") > 0):
-                output = output + A + "v" + B[0:B.find("^")] + "^"
+                output = output + "(" + A + "v" + B[0:B.find("^")] + ")" + "^"
                 B = B[(B.find("^"))+1:]
-              output = output + A + "v" + B
+              output = output + "(" + A + "v" + B + ")"
               
                   
             return output
@@ -438,9 +486,9 @@ def distributeOrRule(input):
             output = ""
             while (A.count("^") > 0):
               operatorIndex2 = A.find("^")
-              output = output + A[0:operatorIndex2] + "v" + B + "^"
+              output = output + "(" + A[0:operatorIndex2] + "v" + B + ")" + "^"
               A = A[operatorIndex2 + 1: len(A)]
-            output = output + A + "v" + B
+            output = output + "(" + A + "v" + B + ")"
             return output
           elif input[operatorIndex - 1] != ')' and input[operatorIndex + 1] == '(':
             B = B[1 : -1]
@@ -450,9 +498,9 @@ def distributeOrRule(input):
             output = ""
             while (B.count("^") > 0):
               operatorIndex2 = B.find("^")
-              output = output + A + "v" + B[0:operatorIndex2] + "^"
+              output = output + "(" + A + "v" + B[0:operatorIndex2] +  ")" + "^"
               B = B[operatorIndex2 + 1: len(B)]
-            output = output + A + "v" + B
+            output = output + "(" + A + "v" + B + ")"
             return output
           else:
             i = i + 1
@@ -466,7 +514,6 @@ def distributeOrRule(input):
         continue
 
   return input
-"""
 
 
 def convertToCNF(input):
@@ -486,7 +533,7 @@ def convertToCNF(input):
         input = doubleNegationRule(input)
         print ("result after double negation rule: " + input)
 
-    if isDistributionCandidate(input):
+    if "v(" in input or ")v" in input:
         input = distributeOrRule(input)
         print ("result after distribute or rule: " + input)
 
@@ -505,22 +552,26 @@ def convertToClause(cnf):
     for i in range(len(cnf)):
         # if it isnt v or ^, check for brackets or add atom
         if cnf[i] != "v" and cnf[i] != "^":
-            # if it is an open bracket, check if we should include it
+                        # if it is an open bracket, check if we should include
+                        # it
             if cnf[i] == "(":
-                # check if we already opened a bracket or if the next element
-                # is a bracket
+                                # check if we already opened a bracket or if the next element
+                                # is a bracket
                 if opened or cnf[i + 1] == "(":
                     # skip this one, we dont want 2
                     pass
 
                 # Checks if the expression is in the form: (A), skips bracket
-                elif len(range(i, cnf.find(")", i))) == 2:
-                    pass
-
-                # Adds the bracket if we need one and sets the flag to true
                 else:
-                    output += "("
-                    opened = True
+                    #loop through from i to end, checking if there are any other expressions in the ()
+                    for j in range(i,len(cnf)):
+                        #if there is another expression we can add brackets
+                        if cnf[j] == "v":
+                            output += "("
+                            opened = True
+                        #no other expressions, remove brackets
+                        elif cnf[j] == ")":
+                            pass
 
             # Check for closed brackets
             elif cnf[i] == ")":
@@ -550,9 +601,9 @@ def convertToClause(cnf):
     # add last } and return
     output += "}"
 
-    #output = cleanUp(output)
+ #   output = cleanUp(output)
     return output
-
+                    
 
 def main():
     while True:
