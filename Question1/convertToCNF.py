@@ -533,8 +533,8 @@ def convertToCNF(input):
         input = doubleNegationRule(input)
         print ("result after double negation rule: " + input)
 
-    if "v(" in input or ")v" in input:
-        input = distributeOrRule(input)
+    if isDistributionCandidate(input):
+        #input = distributeOrRule(input)
         print ("result after distribute or rule: " + input)
 
     return input
@@ -566,7 +566,7 @@ def convertToClause(cnf):
                     #loop through from i to end, checking if there are any other expressions in the ()
                     for j in range(i,len(cnf)):
                         #if there is another expression we can add brackets
-                        if cnf[j] == "v":
+                        if cnf[j] == "v" and opened == False:
                             output += "("
                             opened = True
                         #no other expressions, remove brackets
