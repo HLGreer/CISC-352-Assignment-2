@@ -1,5 +1,4 @@
-# CLOSE_BRACKET = ")"
-# OPEN_BRACKET = "("
+
 def removeWhitespace(sentence):
     stack, out, s = [], [], []
     precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
@@ -27,7 +26,7 @@ def removeWhitespace(sentence):
     return out
 
 
-def groupByOperatorPrecedence():
+def groupByOperatorPrecedence(str):
     stack, out, ops = [], [], ['!', '^', 'v', '->', '<->']
     for token in str:
         if(token not in ops):
@@ -45,13 +44,12 @@ def groupByOperatorPrecedence():
 # Adds precedence brackets to an infix sentence
 
 
-def initiate():
-    filename = 'text.txt'
+def initiate(filename):
     with open(filename) as f:
         sentence = f.readlines()
     sentence = sentence[0].strip()
     str = removeWhitespace(sentence)
-    s = groupByOrperatorPrecedence(str)
+    s = groupByOperatorPrecedence(str)
     return s
 
 # can't assume that no double negation
@@ -225,6 +223,7 @@ def implicationRule(input):
         if operatorInClause == None:  # if not in brackets:
             # print("implication is not surrounded by brackets")
             A = input[0: operatorIndex]
+            
             # since "<->" is 3 chars long
             B = input[operatorIndex + 2: len(input)]
             input = "!(" + A + ")v(" + B + ")"
@@ -243,8 +242,8 @@ def implicationRule(input):
 
             # print ("leftOfClause = " + leftOfClause)
             # print ("rightOfClause = " + rightOfClause)
-            # print("A = " + A)
-            # print("B = " + B)
+            #print("A = " + A)
+            #print("B = " + B)
 
             input = leftOfClause + "(!(" + A + ")v(" + B + "))" + rightOfClause
 
@@ -327,108 +326,10 @@ def addNot(input):
 
 
 def doubleNegationRule(input):
-    # loop while there are still !! left
-    while (input.count("!!") > 0):
-        # find the !!
-        operatorIndex = input.find("!!")
-        # Replace them with nothing
-        input = input[0:operatorIndex] + input[operatorIndex + 2: len(input)]
-    # return
+    input = input.replace("!!", "")
     return input
 
-# Checks if or distribution is needed
 
-
-def isDistributionCandidate(input):
-    # find both ways
-    findOr = input.find("v(")
-    findOr2 = input.find(")v")
-
-    # Check if either are there
-    if findOr == -1 and findOr2 == -1:
-        return False
-    # Go through and see if ^ is there
-    for i in range(input.find("v("), len(input)):
-        # if we reached ), set flag to flase but don't return
-        # There still may be other brackets
-        if input[i] == ")":
-            flag = False
-        # if ^ is inside brackets with v outside, true
-        elif input[i] == "^":
-            return True
-    # go reverse to check for )v
-    for i in range(input.find(")v"), 0, -1):
-        # if we reached ( set the flag but dont end
-        if input[i] == "(":
-            flag = False
-        # we found a ^ so true
-        elif input[i] == "^":
-            return True
-    return flag
-
-"""
-def distributeOrRule(input):
-    # while there are still nots needing to be propagated
-    while isDistributionCandidate(input):
-        # setup a counter for brackets
-        count = 0
-        # get the location of the first one
-        location = input.find("v(")
-        atom = input[location-1]
-        # remove the not before the bracket, keep the bracket
-        input = input[0:location-1] + input[location + 1] + \
-            input[location + 2:len(input)]
-        print(input)
-
-        
-        # loop through the open bracket, starting at the location of !(
-        
-        for i in range(location, len(input)):
-            # if we open more brackets, add to the count
-            if input[i] == "(":
-                count += 1
-
-            # if we close a bracket, remove from the count
-            elif input[i] == ")":
-                count -= 1
-
-                # if we have no more brackets we are done with this iteration
-                # store the end location so we know how far to add negations
-                if count == 0:
-                    endLocation = i
-                    while input.find("^",location,endLocation):
-                        if input[i] == "^":
-                            input = input[0:i-1] + "(" + atom + "v" + input[i-1] +")"+ "^" + input[i + 1:len(input)]
-                    
-
-            # If there is an ^, change it to v
-            
-
-            # If there is an v, change it to ^
-            #elif input[i] == "v":
-                #input = input[0] + input[1:i] + "^" + input[i + 1:len(input)]
-    return input
-
-"""
-"""
-def distributeOrRule(input):
-    while isDistributionCandidate(input):
-        count = 0
-        findOr = input.find("v(")
-        findOr2 = input.find(")v")
-
-        # Case 1 - Av(B^C)
-        # The v is in front and has an atom
-        if findOr >= 0 and input[findOr - 1] != ")":
-            atom = input[findOr - 1]
-            location = findOr
-            for i in range(location, len(input)):
-                if input[i] == "^":
-                    #input = input[0:location - 1] + "(" + atom + "v" + input[i - 1] + ")" + "^(" + atom + "v" + input[i + 1:]
-                    print(input[0:location-1] + )
-            return input
-
-"""
 
 def distributeOrRule(input):
   
@@ -446,7 +347,7 @@ def distributeOrRule(input):
             A = convertToCNF(A)
             B = convertToCNF(B)
             A = A[1 : -1]
-            B = B[1 : -1]
+            B = B[1:-1]
             #print(A)
             #print(B)
             if (A.count("^") == 0 and B.count("^") == 0):
@@ -476,9 +377,7 @@ def distributeOrRule(input):
               while(B.count("^") > 0):
                 output = output + "(" + A + "v" + B[0:B.find("^")] + ")" + "^"
                 B = B[(B.find("^"))+1:]
-              output = output + "(" + A + "v" + B + ")"
-              
-                  
+              output = output + "(" + A + "v" + B + ")" 
             return output
           elif input[operatorIndex - 1] == ')' and input[operatorIndex + 1] != '(':
             A = A[1 : -1]
@@ -516,51 +415,68 @@ def distributeOrRule(input):
   return input
 
 
-def convertToCNF(input):
-    if "<->" in input:
-        input = iffRule(input)
-        print ("result after iff rule: " + input)
+def andResolution(input):
+    i = 0
+    for character in input:
+      if character == '^':
+        operatorIndex = i
+        operatorInClause = checkIfSurroundedByBrackets(input, operatorIndex)
+        #print(operatorIndex)
+        if operatorInClause == None: #if not in brackets:
+            A = input[0 : operatorIndex]
+            B = input[operatorIndex + 1 : len(input)]
+            if input[operatorIndex - 1] == ')' and input[operatorIndex + 1] == '(':
+                #print(A)
+                #print(B)
+                A = A[1 : -1]
+                B = B[1:-1]
+                A = convertToCNF(A)
+                B = convertToCNF(B)
+                #print(A)
+                #print(B)
+                output = A + "^" + B 
 
-    if "->" in input:
-        input = implicationRule(input)
-        print ("result after implication rule: " + input)
+            elif input[operatorIndex - 1] == ')' and input[operatorIndex + 1] != '(':
+                A = A[1 : -1]
+                A = convertToCNF(A)
+                
+                output  = "(" + A + ")" + "^" + B
 
-    if "!(" in input:
-        input = propagateNot(input)
-        print ("result after not propagation: " + input)
+            elif input[operatorIndex - 1] != ')' and input[operatorIndex + 1] == '(':
+                B = B[1 : -1]
+                B = convertToCNF(B)
+                
+                output =  A + "^" + "(" + B + ")"
 
-    if "!!" in input:
-        input = doubleNegationRule(input)
-        print ("result after double negation rule: " + input)
+            else:
+                i = i + 1
+            continue
+        else:
+          #input = input[1:-1]
+          i = i + 1
+          continue
+      else:
+        i = i + 1
+        continue
+    return output
 
-    if isDistributionCandidate(input):
-        #input = distributeOrRule(input)
-        print ("result after distribute or rule: " + input)
-
-    return input
 
 # converts to clause form
-
-
 def convertToClause(cnf):
     # flag
     opened = False
-
     # initial {
     output = "{"
     # loop through the expression
     for i in range(len(cnf)):
         # if it isnt v or ^, check for brackets or add atom
         if cnf[i] != "v" and cnf[i] != "^":
-                        # if it is an open bracket, check if we should include
-                        # it
+            # if it is an open bracket, check if we should include it
             if cnf[i] == "(":
-                                # check if we already opened a bracket or if the next element
-                                # is a bracket
+                # check if we already opened a bracket or if the next element is a bracket
                 if opened or cnf[i + 1] == "(":
                     # skip this one, we dont want 2
                     pass
-
                 # Checks if the expression is in the form: (A), skips bracket
                 else:
                     #loop through from i to end, checking if there are any other expressions in the ()
@@ -582,38 +498,70 @@ def convertToClause(cnf):
                 # otherwise we dont want it
                 else:
                     pass
-
             # Adds the atoms
             else:
                 output += cnf[i]
-
         # it is v make it a comma but dont change flags as we are inside the
         # brackets
         elif cnf[i] == "v":
             output += ","
-
         # it is an ^, we can add a comma and reset brackets
         else:
             output += ","
             opened = False
-            closed = False
-
     # add last } and return
     output += "}"
 
- #   output = cleanUp(output)
     return output
-                    
+
+            
+def convertToCNF(input):
+    while(input[0] == "(" and input[-1] == ")" and input[1] == "(" and input[-2] == ")"):
+        input = input[1:-1]
+        
+    if "<->" in input:
+        input = iffRule(input)
+        print ("result after iff rule: " + input)
+
+    if "->" in input:
+        input = implicationRule(input)
+        print ("result after implication rule: " + input)
+
+    if "!(" in input:
+        input = propagateNot(input)
+        print ("result after not propagation: " + input)
+
+    if "!!" in input:
+        input = doubleNegationRule(input)
+        print ("result after double negation rule: " + input)
+
+    if ")^(" in input:
+        input = andResolution(input)
+        
+    if "v(" in input or ")v" in input:
+        input = "(" + distributeOrRule(input) + ")"
+        print ("result after distribute or rule: " + input)
+
+    return input
 
 def main():
+    """
     while True:
         inputFormula = input("Input formula: ")
         if inputFormula == "quit":
             print("Ending program.")
             break
-
         outputFormula = convertToCNF(inputFormula)
-        outputFormula = convertToClause(outputFormula)
+        outputFormula = convertToClause("(" + outputFormula + ")")
         print("Output formula: " + outputFormula + "\n")
+    """       
+    
+
+    expression = initiate('cnf.txt')
+    #print(expression)
+    outputFormula = convertToCNF(expression)
+    outputFormula = convertToClause("(" + outputFormula + ")")
+    print("Output formula: " + outputFormula + "\n")
+    return outputFormula
 
 main()
