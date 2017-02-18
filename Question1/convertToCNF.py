@@ -3,6 +3,8 @@ def removeWhitespace(sentence):
     stack, out, s = [], [], []
     precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
     sentence = sentence.replace(' ', '')
+    if(sentence[0] == '('):
+        return sentence
     i = 0
     while(i < len(sentence)):
         if(sentence[i] != '-' and sentence[i] != '<'):
@@ -14,13 +16,13 @@ def removeWhitespace(sentence):
         elif(sentence[i] == '<'):
             s.append('<->')
             i += 3
-    for token in s:
+    for token in s :
         if(token not in precedence):
             out.append(token)
         else:
             while(stack and precedence[token] < precedence[stack[0]]):
                 out.append(stack.pop(0))
-            stack.insert(0, token)
+            stack.insert(0, token)    
     while(stack):
         out.append(stack.pop(0))
     return out
@@ -49,8 +51,10 @@ def initiate(filename):
         sentence = f.readlines()
     sentence = sentence[0].strip()
     str = removeWhitespace(sentence)
-    s = groupByOperatorPrecedence(str)
-    return s
+    if(str[0] != '('):
+        s = groupByOperatorPrecedence(str)
+    else:
+        return str
 
 # can't assume that no double negation
 
