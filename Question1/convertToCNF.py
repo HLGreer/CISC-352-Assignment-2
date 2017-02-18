@@ -3,7 +3,7 @@ def removeWhitespace(sentence):
     stack, out, s = [], [], []
     precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
     sentence = sentence.replace(' ', '')
-    if(sentence[1] == '('):
+    if(sentence[0] == '('):
         return sentence
     i = 0
     while(i < len(sentence)):
@@ -51,8 +51,11 @@ def initiate(filename):
         sentence = f.readlines()
     sentence = sentence[0].strip()
     str = removeWhitespace(sentence)
-    s = groupByOperatorPrecedence(str)
-    return s
+    if(str[0] != '('):
+        s = groupByOperatorPrecedence(str)
+        return s
+    else:
+        return str
 
 # can't assume that no double negation
 
