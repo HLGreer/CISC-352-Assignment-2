@@ -1,4 +1,3 @@
-
 def removeWhitespace(sentence):
     stack, out, s = [], [], []
     precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
@@ -16,13 +15,13 @@ def removeWhitespace(sentence):
         elif(sentence[i] == '<'):
             s.append('<->')
             i += 3
-    for token in s:
+    for token in s :
         if(token not in precedence):
             out.append(token)
         else:
             while(stack and precedence[token] < precedence[stack[0]]):
                 out.append(stack.pop(0))
-            stack.insert(0, token)
+            stack.insert(0, token)    
     while(stack):
         out.append(stack.pop(0))
     return out
