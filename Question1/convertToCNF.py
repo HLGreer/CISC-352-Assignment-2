@@ -568,4 +568,5 @@ def main():
     print("Output formula: " + outputFormula + "\n")
     return outputFormula
 
-main()
+if __name__ == "__main__":
+    main()
