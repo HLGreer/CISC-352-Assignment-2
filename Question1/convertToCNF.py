@@ -568,4 +568,4 @@ def main():
     print("Output formula: " + outputFormula + "\n")
     return outputFormula
 
-#main()
+main()
