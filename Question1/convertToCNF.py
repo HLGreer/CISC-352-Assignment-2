@@ -1,3 +1,4 @@
+
 def removeWhitespace(sentence):
     stack, out, s = [], [], []
     precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
@@ -50,9 +51,9 @@ def initiate(filename):
         sentence = f.readlines()
     sentence = sentence[0].strip()
     str = removeWhitespace(sentence)
+    #print(str)
     if(str[0] != '('):
         s = groupByOperatorPrecedence(str)
-        return s
     else:
         return str
 
@@ -558,14 +559,15 @@ def main():
         outputFormula = convertToCNF(inputFormula)
         outputFormula = convertToClause("(" + outputFormula + ")")
         print("Output formula: " + outputFormula + "\n")
-    """       
+    """      
     
 
     expression = initiate('cnf.txt')
+    print(expression)
     #print(expression)
     outputFormula = convertToCNF(expression)
     outputFormula = convertToClause("(" + outputFormula + ")")
     print("Output formula: " + outputFormula + "\n")
     return outputFormula
-
+    
 main()
