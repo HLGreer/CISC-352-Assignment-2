@@ -1,20 +1,31 @@
 def removeWhitespace(sentence):
+    i = 0
     stack, out, s = [], [], []
     precedence = {'!': 4, '^': 3, 'v': 2, '->': 1, '<->': 0}
     sentence = sentence.replace(' ', '')
+    newSentence = ""
     if(sentence[0] == '('):
         return sentence
-    i = 0
     while(i < len(sentence)):
-        if(sentence[i] != '-' and sentence[i] != '<'):
-            s.append(sentence[i])
+        if(sentence[i] not in precedence and sentence[i] not in {'<', '-'}):
+            newSentence += sentence[i]
             i += 1
         elif(sentence[i] == '-'):
-            s.append('->')
+            newSentence += ' '
+            newSentence += '->'
             i += 2
+            newSentence += ' '
         elif(sentence[i] == '<'):
-            s.append('<->')
+            newSentence += ' '
+            newSentence += '<->'
             i += 3
+            newSentence += ' '
+        elif(sentence[i] in precedence):
+            newSentence += ' '
+            newSentence += sentence[i]
+            i +=1
+            newSentence += ' '
+    s = newSentence.split()
     for token in s :
         if(token not in precedence):
             out.append(token)
@@ -25,6 +36,7 @@ def removeWhitespace(sentence):
     while(stack):
         out.append(stack.pop(0))
     return out
+
 
 
 def groupByOperatorPrecedence(str):
@@ -39,6 +51,8 @@ def groupByOperatorPrecedence(str):
                 unit = '(' + stack.pop(-2) + token + stack.pop() + ')'
             stack.append(unit)
     s = stack[0]
+    # This line removes the leading and trailing bracket for the sentence. Comment
+    # out if you want to have those outer brackets
     s = s[1:-1]
     return s
 

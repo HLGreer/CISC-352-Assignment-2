@@ -1,1 +1,1 @@
-d^c
+Dog <-> Cat v Dog ^ !Bird
