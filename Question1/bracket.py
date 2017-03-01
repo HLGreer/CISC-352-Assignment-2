@@ -43,7 +43,6 @@ def infix(str):
                 unit = '(' + stack.pop(-2) + token + stack.pop() + ')'
             stack.append(unit)
     s = stack[0]
-    s = s[1:-1]
     return s
 
 # Adds precedence brackets to an infix sentence
@@ -55,6 +54,7 @@ def bracket():
     str = shunting(sentence)
     if(str[0] != '('):
         s = infix(str)
+        return s
     else:
         return str
 
