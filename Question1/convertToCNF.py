@@ -52,7 +52,8 @@ def groupByOperatorPrecedence(str):
                 unit = '(' + stack.pop(-2) + token + stack.pop() + ')'
             stack.append(unit)
     s = stack[0]
-    s = s[1:-1]
+    if s[0] == "(" and s[-1] == ")":
+        s = s[1:-1]
     return s
 
 # Adds precedence brackets to an infix sentence
@@ -571,7 +572,7 @@ def main():
         outputFormula = convertToCNF(inputFormula)
         outputFormula = convertToClause("(" + outputFormula + ")")
         print("Output formula: " + outputFormula + "\n")
-    """      
+    """     
     
 
     expression = initiate('cnf.txt')
@@ -581,7 +582,7 @@ def main():
     outputFormula = convertToClause("(" + outputFormula + ")")
     print("Output formula: " + outputFormula + "\n")
     return outputFormula
-  
+    
 if __name__ == "__main__":
     main()
 
