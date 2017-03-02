@@ -52,8 +52,6 @@ def groupByOperatorPrecedence(str):
                 unit = '(' + stack.pop(-2) + token + stack.pop() + ')'
             stack.append(unit)
     s = stack[0]
-    # This line removes the leading and trailing bracket for the sentence. Comment
-    # out if you want to have those outer brackets
     s = s[1:-1]
     return s
 
@@ -65,9 +63,9 @@ def initiate(filename):
         sentence = f.readlines()
     sentence = sentence[0].strip()
     str = removeWhitespace(sentence)
-    #print(str)
     if(str[0] != '('):
         s = groupByOperatorPrecedence(str)
+        return s
     else:
         return str
 
@@ -578,7 +576,7 @@ def main():
 
     expression = initiate('cnf.txt')
     print(expression)
-    #print(expression)
+    print(expression)
     outputFormula = convertToCNF(expression)
     outputFormula = convertToClause("(" + outputFormula + ")")
     print("Output formula: " + outputFormula + "\n")
