@@ -1,5 +1,2 @@
-<<<<<<< HEAD
-(A<->B)
-=======
 Dog <-> Cat v Dog ^ !Bird
->>>>>>> HLGreer/master
+
