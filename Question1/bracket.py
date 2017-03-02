@@ -1,3 +1,4 @@
+
 # Removes all spaces from the string and then places each character
 # into an array of tokens, with multicharcacter operators (such as '->')
 # being an individual token.
@@ -64,6 +65,7 @@ def bracket():
         sentence = f.readlines()
     sentence = sentence[0].strip()
     str = shunting(sentence)
+    print(str)
     if(str[0] != '('):
         s = infix(str)
         return s

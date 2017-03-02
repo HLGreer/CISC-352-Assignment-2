@@ -1,3 +1,4 @@
+
 def removeWhitespace(sentence):
     i = 0
     stack, out, s = [], [], []
@@ -51,8 +52,6 @@ def groupByOperatorPrecedence(str):
                 unit = '(' + stack.pop(-2) + token + stack.pop() + ')'
             stack.append(unit)
     s = stack[0]
-    # This line removes the leading and trailing bracket for the sentence. Comment
-    # out if you want to have those outer brackets
     s = s[1:-1]
     return s
 
@@ -572,15 +571,17 @@ def main():
         outputFormula = convertToCNF(inputFormula)
         outputFormula = convertToClause("(" + outputFormula + ")")
         print("Output formula: " + outputFormula + "\n")
-    """       
+    """      
     
 
     expression = initiate('cnf.txt')
-    #print(expression)
+    print(expression)
+    print(expression)
     outputFormula = convertToCNF(expression)
     outputFormula = convertToClause("(" + outputFormula + ")")
     print("Output formula: " + outputFormula + "\n")
     return outputFormula
-
+  
 if __name__ == "__main__":
     main()
+
