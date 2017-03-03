@@ -31,7 +31,7 @@ def removeWhitespace(sentence):
         if(token not in precedence):
             out.append(token)
         else:
-            while(stack and precedence[token] < precedence[stack[0]]):
+            while(stack and precedence[token] <= precedence[stack[0]]):
                 out.append(stack.pop(0))
             stack.insert(0, token)    
     while(stack):
@@ -49,7 +49,7 @@ def groupByOperatorPrecedence(str):
             if(token == '!'):
                 unit = token + stack.pop()
             else:
-                unit = '(' + stack.pop(-2) + token + stack.pop() + ')'
+                unit = '(' + stack.pop(-2) + token + stack.pop(-1) + ')'
             stack.append(unit)
     s = stack[0]
     if s[0] == "(" and s[-1] == ")":
