@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 A^B
+=======
+!Av!B^!CvD
+>>>>>>> origin/master
