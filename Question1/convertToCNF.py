@@ -191,7 +191,6 @@ def checkIfSurroundedByBrackets(string, index):
 
 # rule: A <-> B = (A->B) ^ (B->A)
 def iffRule(input):
-
     # for i in range(numIffOccurrences): # do the iffRule for each "<->" found
     while (input.count("<->") > 0):
         # check if "<->" is in its own bracket set (in a clause)
@@ -544,23 +543,31 @@ def convertToCNF(input):
     if "->" in input:
         input = implicationRule(input)
         print ("result after implication rule: " + input)
-
+    
     if "!(" in input:
         input = propagateNot(input)
         print ("result after not propagation: " + input)
-
+    
     if "!!" in input:
         input = doubleNegationRule(input)
         print ("result after double negation rule: " + input)
-
+        
+    
     if ")^(" in input:
         input = andResolution(input)
         
     if "v(" in input or ")v" in input:
-        input = "(" + distributeOrRule(input) + ")"
+        input = "("+ distributeOrRule(input) + ")"
         print ("result after distribute or rule: " + input)
 
     return input
+
+def cleanupBrackets(input):
+    operatorInClause = checkIfSurroundedByBrackets(input,1)
+    if operatorInClause !=None:
+        return (input[0:operatorInClause[0]] + input[operatorInClause[0]+1:operatorInClause[1]] + input[operatorInClause[1]+1:])
+    else: return input
+        
 
 def main():
     """
@@ -569,6 +576,8 @@ def main():
         if inputFormula == "quit":
             print("Ending program.")
             break
+        inputFormula = cleanupBrackets(inputFormula)
+        print(inputFormula)
         outputFormula = convertToCNF(inputFormula)
         outputFormula = convertToClause("(" + outputFormula + ")")
         print("Output formula: " + outputFormula + "\n")
@@ -577,6 +586,7 @@ def main():
 
     expression = initiate('cnf.txt')
     print(expression)
+    expression = cleanupBrackets(expression)
     print(expression)
     outputFormula = convertToCNF(expression)
     outputFormula = convertToClause("(" + outputFormula + ")")
