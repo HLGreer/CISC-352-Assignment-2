@@ -497,14 +497,16 @@ def convertToClause(cnf):
                 # Checks if the expression is in the form: (A), skips bracket
                 else:
                     #loop through from i to end, checking if there are any other expressions in the ()
-                    for j in range(i,len(cnf)):
+                    #for j in range(i,len(cnf)):
                         #if there is another expression we can add brackets
-                        if cnf[j] == "v" and opened == False:
-                            output += "("
-                            opened = True
+                     #   if cnf[j] == "v" and opened == False:
+                      #      output += "("
+                       #     opened = True
                         #no other expressions, remove brackets
-                        elif cnf[j] == ")":
-                            pass
+                        #elif cnf[j] == ")":
+                         #   pass
+                    output += "("
+                    opened = True
 
             # Check for closed brackets
             elif cnf[i] == ")":
@@ -555,7 +557,7 @@ def convertToCNF(input):
     
     if ")^(" in input:
         input = andResolution(input)
-        
+
     if "v(" in input or ")v" in input:
         input = "("+ distributeOrRule(input) + ")"
         print ("result after distribute or rule: " + input)
