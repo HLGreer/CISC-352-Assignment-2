@@ -369,10 +369,10 @@ def isClause(input):
 
 def isAndMainOperatorInClause(string, clauseStart, clauseEnd):
   #returns the index of AND if it is the main operator in clause, otherwise returns None
-  print("is and main operator in clause...")
-  print("string = " + string)
-  print (clauseStart)
-  print (clauseEnd)
+  #print("is and main operator in clause...")
+  #print("string = " + string)
+  #print (clauseStart)
+  #print (clauseEnd)
 
   numAndsInClause = string[clauseStart: clauseEnd+1].count('^')
   #print (numAndsInClause)
@@ -392,8 +392,8 @@ def isAndMainOperatorInClause(string, clauseStart, clauseEnd):
     lastAndIndexChecked = andIndex
     leftOfAnd = string[clauseStart+1:andIndex]
     rightOfAnd = string[andIndex+1:clauseEnd]
-    print ("leftOfAnd: ", leftOfAnd)
-    print ("rightOfAnd: ", rightOfAnd)
+    #print ("leftOfAnd: ", leftOfAnd)
+    #print ("rightOfAnd: ", rightOfAnd)
     if isClause(leftOfAnd) and isClause(rightOfAnd):
       return andIndex
 
@@ -414,7 +414,6 @@ def distributeOrRule(input):
     #orIndex = input.find("v(")
 
     if orIndex != -1:
-      print ("here1")
       #indexLastOrChecked = orIndex
       orInClause = checkIfSurroundedByBrackets(input, orIndex)
       left = "" #leftOfClause
@@ -431,6 +430,7 @@ def distributeOrRule(input):
       mainAndIndex = isAndMainOperatorInClause(input, orIndex+1, rightClauseCloseBracket)
 
       if mainAndIndex == None: # right side is not of form (B^C); look at next or
+        #print ("and is not main operator in clause")
         pass
       else:
         #it's of form Av(B^C)
@@ -439,7 +439,7 @@ def distributeOrRule(input):
         B = input[orIndex+2:mainAndIndex]
         C = input[mainAndIndex + 1: rightClauseCloseBracket]
 
-        input = left + "((" + A + ")v(" + B + "))^((" + A + ")v(" + C + "))" + right
+        input = left + "(((" + A + ")v(" + B + "))^((" + A + ")v(" + C + ")))" + right
         usedRule = True
 
 
@@ -448,7 +448,6 @@ def distributeOrRule(input):
     #orIndex2 = input.find(")v")
 
     if orIndex2 != -1:
-      print "here2"
       orIndex2 = orIndex2 + 1 #to get rid of bracket
       #indexLastOrChecked = orIndex2
 
@@ -470,7 +469,7 @@ def distributeOrRule(input):
       #print(orIndex2 - 1)
 
       if mainAndIndex == None: # right side is not of form (B^C); look at next or
-        print("here3")
+        #print ("and is not main operator in clause")
         pass
       else:
         #it's of form left+((B^C)vA)+right
@@ -479,26 +478,26 @@ def distributeOrRule(input):
         B = input[leftClauseOpenBracket + 1:mainAndIndex]
         C = input[mainAndIndex + 1: orIndex2-1]
 
-        input = left + "((" + A + ")v(" + B + "))^((" + A + ")v(" + C + "))" + right
+        input = left + "(((" + A + ")v(" + B + "))^((" + A + ")v(" + C + ")))" + right
         usedRule = True
 
     if orIndex == -1 and orIndex2 == -1:
       break
-    elif orIndex == -1 or orIndex2 == -1 and usedRule == False:
-      indexLastOrChecked = max(orIndex, orIndex2)
+    elif usedRule == False and (orIndex == -1 or orIndex2 == -1) :
+      indexLastOrChecked = min(orIndex, orIndex2)
     elif orIndex == orIndex2 and usedRule == False:
       indexLastOrChecked = orIndex
     else: #usedRule == True:
       indexLastOrChecked = -1 #reset
 
-    print ("test: " + input)
+    #print ("test: " + input)
     input = cleanupBrackets(input)
-    print ("after cleanup brackets: " + input)
+    #print ("after cleanup brackets: " + input)
 
   #once more after loop
-  print ("test: " + input)
+  #print ("test: " + input)
   input = cleanupBrackets(input)
-  print ("after cleanup brackets: " + input)
+  #print ("after cleanup brackets: " + input)
 
   return input
 
