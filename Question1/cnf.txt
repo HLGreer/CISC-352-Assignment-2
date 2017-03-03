@@ -1,1 +1,5 @@
+<<<<<<< HEAD
  A<->BvC^!E
+=======
+!Av!B^!CvD
+>>>>>>> fixed some precedence errors
