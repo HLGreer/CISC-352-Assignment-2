@@ -644,7 +644,7 @@ def cleanupBrackets(input):
 
     i = i+1
 
-
+  return input
 
 def convertToClauseWithBrackets(cnf):
   # flag
@@ -719,7 +719,7 @@ def main():
   """
 
   expression = initiate('cnf.txt')
-  # print(expression)
+  print(expression)
   expression = cleanupBrackets(expression)
   print(expression)
 
