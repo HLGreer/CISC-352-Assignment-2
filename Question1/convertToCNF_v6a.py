@@ -400,7 +400,8 @@ def isAndMainOperatorInClause(string, clauseStart, clauseEnd):
   return None
 
 def distributeOrRule(input):
-
+  if input.find("^") == -1:
+    return input
   #rule: A v (B ^ C) = (A v B) ^ (A v C)
 
   indexLastOrChecked = -1
@@ -751,7 +752,7 @@ def main():
 
   # for the map problem - add brackets to single atoms
   outputFormula = convertToClauseWithBrackets(outputFormula)
-  # print(outputFormula)
+  #print(outputFormula)
   return outputFormula
 
 
