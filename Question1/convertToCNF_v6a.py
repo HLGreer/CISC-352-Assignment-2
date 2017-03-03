@@ -587,7 +587,7 @@ def convertToCNF(input):
     #for i in range(5):
 
     input = cleanupBrackets(input)
-    print ("after cleaning up brackets: " + input)
+    #print ("after cleaning up brackets: " + input)
 
     input = "(" + distributeOrRule(input) + ")"
     print ("result after distribute or rule: " + input)
