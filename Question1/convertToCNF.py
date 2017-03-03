@@ -1,4 +1,11 @@
-
+"""
+Cisc 352 Assignment 2
+CNF Part written by:
+-Justin Gerolami
+- Anna Ilina
+- Emerson Wang
+- Kyle Delaney
+"""
 def removeWhitespace(sentence):
     i = 0
     stack, out, s = [], [], []
@@ -37,7 +44,6 @@ def removeWhitespace(sentence):
     while(stack):
         out.append(stack.pop(0))
     return out
-
 
 
 def groupByOperatorPrecedence(str):
@@ -554,7 +560,6 @@ def convertToCNF(input):
         input = doubleNegationRule(input)
         print ("result after double negation rule: " + input)
         
-    
     if ")^(" in input:
         input = andResolution(input)
 
@@ -567,11 +572,68 @@ def convertToCNF(input):
 def cleanupBrackets(input):
     operatorInClause = checkIfSurroundedByBrackets(input,1)
     if operatorInClause !=None:
-        print(operatorInClause)
+        #print(operatorInClause)
         return (input[0:operatorInClause[0]] + input[operatorInClause[0]+1:operatorInClause[1]] + input[operatorInClause[1]+1:])
     else: return input
         
+def convertToClauseWithBrackets(cnf):
+    # flag
+    opened = False
+    # initial {
+    output = "{"
+    # loop through the expression
+    for i in range(len(cnf)):
+        # if it isnt v or ^, check for brackets or add atom
+        if cnf[i] != "v" and cnf[i] != "^":
+            # if it is an open bracket, check if we should include it
+            if cnf[i] == "(":
+                # check if we already opened a bracket or if the next element is a bracket
+                if opened or cnf[i + 1] == "(":
+                    # skip this one, we dont want 2
+                    pass
+                #Adds bracket
+                else:
+                    output += "("
+                    opened = True
 
+            # Check for closed brackets
+            elif cnf[i] == ")":
+                # If we opened a bracket and we are at the end, or at an ^ add
+                # it
+                if opened and (i == len(cnf) - 1 or cnf[i + 1] == "^"):
+                    output += ")"
+                # otherwise we dont want it
+                else:
+                    pass
+            # Adds the atoms
+            else:
+                #if we are adding an atom and havent added a bracket, add one
+                if opened == False:
+                    output += "("
+                    opened = True
+
+                #If we are opened and the next char is ^ or the end, add )
+                if opened and (i == len(cnf)-1 or cnf[i+1] == "^"):
+                    output += cnf[i] + ")"
+                    opened = False
+                    
+                else:
+                    #add the atom
+                    output += cnf[i]
+        # it is v make it a comma but dont change flags as we are inside the
+        # brackets
+        elif cnf[i] == "v":
+            output += ","
+        # it is an ^, we can add a comma and reset brackets
+        else:
+            output += ","
+            opened = False
+    # add last } and return
+    output += "}"
+
+    return output
+
+    
 def main():
     """
     while True:
@@ -588,12 +650,17 @@ def main():
     
 
     expression = initiate('cnf.txt')
-    print(expression)
+    #print(expression)
     expression = cleanupBrackets(expression)
     print(expression)
+    
     outputFormula = convertToCNF(expression)
-    outputFormula = convertToClause("(" + outputFormula + ")")
-    print("Output formula: " + outputFormula + "\n")
+    CNF = convertToClause("(" + outputFormula + ")")
+    print("Output formula: " + CNF + "\n")
+
+    #for the map problem - add brackets to single atoms
+    outputFormula = convertToClauseWithBrackets(outputFormula)
+    #print(outputFormula)
     return outputFormula
     
 if __name__ == "__main__":
