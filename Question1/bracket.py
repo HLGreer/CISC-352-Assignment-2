@@ -34,7 +34,7 @@ def shunting(sentence):
         if(token not in precedence):
             out.append(token)
         else:
-            while(stack and precedence[token] < precedence[stack[0]]):
+            while(stack and precedence[token] <= precedence[stack[0]]):
                 out.append(stack.pop(0))
             stack.insert(0, token)    
     while(stack):
@@ -52,8 +52,9 @@ def infix(str):
             if(token == '!'):
                 unit = token + stack.pop()
             else:
-                unit = '(' + stack.pop(-2) + token + stack.pop() + ')'
+                unit = '(' + stack.pop(-2) + token + stack.pop(-1) + ')'
             stack.append(unit)
+        print(stack)
     s = stack[0]
     s = s[1:-1]
     return s
@@ -67,6 +68,7 @@ def bracket():
     str = shunting(sentence)
     print(str)
     if(str[0] != '('):
+        print(str)
         s = infix(str)
         return s
     else:
