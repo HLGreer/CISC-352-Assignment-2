@@ -481,10 +481,14 @@ def distributeOrRule(input):
         input = left + "(((" + A + ")v(" + B + "))^((" + A + ")v(" + C + ")))" + right
         usedRule = True
 
+    print(orIndex)
+    print(orIndex2)
+    print (usedRule)
+    print("")
     if orIndex == -1 and orIndex2 == -1:
       break
     elif usedRule == False and (orIndex == -1 or orIndex2 == -1) :
-      indexLastOrChecked = min(orIndex, orIndex2)
+      indexLastOrCheck near ted = max(orIndex, orIndex2)
     elif orIndex == orIndex2 and usedRule == False:
       indexLastOrChecked = orIndex
     else: #usedRule == True:
