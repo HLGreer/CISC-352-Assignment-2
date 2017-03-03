@@ -558,7 +558,11 @@ def convertToCNF(input):
     if ")^(" in input:
         input = andResolution(input)
 
-    if "v(" in input or ")v" in input:
+    if "v" in input or "v" in input:
+        input = input.replace('(','')
+        input = input.replace(')','')
+        input = removeWhitespace(input)
+        input = groupByOperatorPrecedence(input)
         input = "("+ distributeOrRule(input) + ")"
         print ("result after distribute or rule: " + input)
 
@@ -567,6 +571,7 @@ def convertToCNF(input):
 def cleanupBrackets(input):
     operatorInClause = checkIfSurroundedByBrackets(input,1)
     if operatorInClause !=None:
+        print(operatorInClause)
         return (input[0:operatorInClause[0]] + input[operatorInClause[0]+1:operatorInClause[1]] + input[operatorInClause[1]+1:])
     else: return input
         
