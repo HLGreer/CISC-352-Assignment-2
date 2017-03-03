@@ -38,8 +38,8 @@ def CNF(predicate):
 
 
 def negateL(l):
-    if len(l) > 1:
-        negL = l[1]
+    if "!" in  l:
+        negL = l[1:]
     else:
         negL = '!' + l
     return negL
@@ -49,6 +49,8 @@ def unit_propagate(F):
     while hasUnit:
         l=""
         for i in range(0,len(F)):
+            if len(F[i]) == 0:
+                continue
             if len(F[i]) == 1:
                 l = F[i][0]
                 break
@@ -70,6 +72,37 @@ def remove_unit(F,l):
     return outF
 
 def dpll(F):
+    print F
+    F = unit_propagate(F)
+    if len(F)==1 and F[0]==[]:
+        return False
+    elif F==[]:
+        return True
+    elif [] in F:
+        return False
+    flag = True
+    '''for x in range(0, len(F)):
+        if F[x] is []:
+            F.remove(F[x])
+    if F==[]:
+        return False'''
+    print F[0]
+    l = None
+
+    for x in F:
+        if len(x) > 0:
+            l = x[0]
+            break
+    if l == None:
+        return True
+
+    negL = negateL(l)
+    FsubL = remove_unit(F,l)
+    FsubNL = remove_unit(F,negL)
+    return dpll(FsubL) or dpll(FsubNL)
+
+'''
+def dpll(F):
     F = unit_propagate(F)
     if len(F)==1 and F[0]==[]:
         return False
@@ -80,6 +113,7 @@ def dpll(F):
     FsubL = remove_unit(F,l)
     FsubNL = remove_unit(F,negL)
     return dpll(FsubL) or dpll(FsubNL)
+'''
 
 #convert to clause modified from Question 1
 def convertToClause_PBR(cnf):
@@ -138,11 +172,16 @@ def main():
     predicates = loadTextfile(fileIn)
     finalCNF = []
     concRE = re.compile('Therefore\,\s+(.*)\.')
+    print(predicates)
     for i in range(0, len(predicates)):
         conclusion = concRE.match(predicates[i]) #check if matches regex for conclusion.
         if conclusion:
             predicates[i] = "!(" + conclusion.group(1) + ")" #Negate the conclusion
+        print(predicates[i] + " after: " + CNF(predicates[i]))
         finalCNF += cnfToList(CNF(predicates[i]))
+        print(finalCNF)
+
+    print(finalCNF)
     sat = dpll(finalCNF) #runs the dpll algorithm
     outFile = open("out.txt","w")
     if sat:
