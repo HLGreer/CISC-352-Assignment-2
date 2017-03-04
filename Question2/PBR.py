@@ -177,6 +177,7 @@ def main():
         conclusion = concRE.match(predicates[i]) #check if matches regex for conclusion.
         if conclusion:
             predicates[i] = "!(" + conclusion.group(1) + ")" #Negate the conclusion
+        predicates[i].replace(" ","")
         print(predicates[i] + " after: " + CNF(predicates[i]))
         finalCNF += cnfToList(CNF(predicates[i]))
         print(finalCNF)
