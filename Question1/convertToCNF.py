@@ -369,13 +369,13 @@ def isClause(input):
 
 def isAndMainOperatorInClause(string, clauseStart, clauseEnd):
   #returns the index of AND if it is the main operator in clause, otherwise returns None
-  #print("is and main operator in clause...")
-  #print("string = " + string)
-  #print (clauseStart)
-  #print (clauseEnd)
+
+  string = cleanupBrackets(string)
+  # print(string[clauseStart:clauseEnd+1])
+  # print (clauseStart)
+  # print (clauseEnd)
 
   numAndsInClause = string[clauseStart: clauseEnd+1].count('^')
-  #print (numAndsInClause)
 
   if numAndsInClause == 0:
     return None
@@ -386,22 +386,20 @@ def isAndMainOperatorInClause(string, clauseStart, clauseEnd):
   rightOfAnd = None
 
   for i in range(numAndsInClause):
-    andIndex = string.find('^', lastAndIndexChecked, clauseEnd+1)
-    #print ("andIndex")
-    #print(andIndex)
+    andIndex = string.find('^', lastAndIndexChecked + 1, clauseEnd+1)
     lastAndIndexChecked = andIndex
     leftOfAnd = string[clauseStart+1:andIndex]
     rightOfAnd = string[andIndex+1:clauseEnd]
-    #print ("leftOfAnd: ", leftOfAnd)
-    #print ("rightOfAnd: ", rightOfAnd)
+    # print (andIndex)
+    # print (leftOfAnd)
+    # print (rightOfAnd)
     if isClause(leftOfAnd) and isClause(rightOfAnd):
       return andIndex
 
   return None
 
 def distributeOrRule(input):
-  if input.find("^") == -1:
-    return input
+
   #rule: A v (B ^ C) = (A v B) ^ (A v C)
 
   indexLastOrChecked = -1
@@ -412,10 +410,8 @@ def distributeOrRule(input):
 
     #check if of form Av(B^C)
     orIndex = input.find("v(", indexLastOrChecked + 1, len(input))
-    #orIndex = input.find("v(")
 
     if orIndex != -1:
-      #indexLastOrChecked = orIndex
       orInClause = checkIfSurroundedByBrackets(input, orIndex)
       left = "" #leftOfClause
       right = "" #rightOfClause
@@ -431,7 +427,6 @@ def distributeOrRule(input):
       mainAndIndex = isAndMainOperatorInClause(input, orIndex+1, rightClauseCloseBracket)
 
       if mainAndIndex == None: # right side is not of form (B^C); look at next or
-        #print ("and is not main operator in clause")
         pass
       else:
         #it's of form Av(B^C)
@@ -446,11 +441,9 @@ def distributeOrRule(input):
 
     #check if of form left+((B^C)vA)+right
     orIndex2 = input.find(")v", indexLastOrChecked + 1, len(input))
-    #orIndex2 = input.find(")v")
 
     if orIndex2 != -1:
       orIndex2 = orIndex2 + 1 #to get rid of bracket
-      #indexLastOrChecked = orIndex2
 
       orInClause = checkIfSurroundedByBrackets(input, orIndex2)
       left = "" #leftOfClause
@@ -463,14 +456,10 @@ def distributeOrRule(input):
         left = input[:leftOuterBracket]
         right = input[rightOuterBracket + 1 :]
 
-
       leftClauseOpenBracket = findCorrespondingOpenBracket(input, orIndex2 - 1)
       mainAndIndex = isAndMainOperatorInClause(input, leftClauseOpenBracket, orIndex2-1)
-      #print(leftClauseOpenBracket)
-      #print(orIndex2 - 1)
 
       if mainAndIndex == None: # right side is not of form (B^C); look at next or
-        #print ("and is not main operator in clause")
         pass
       else:
         #it's of form left+((B^C)vA)+right
@@ -482,6 +471,13 @@ def distributeOrRule(input):
         input = left + "(((" + A + ")v(" + B + "))^((" + A + ")v(" + C + ")))" + right
         usedRule = True
 
+    # #
+    # print (input[leftClauseOpenBracket: orIndex2-1])
+    # print (orIndex)
+    # print(orIndex2)
+    # print(usedRule)
+    #print(input)
+    print("")
 
     if orIndex == -1 and orIndex2 == -1:
       break
@@ -743,9 +739,9 @@ def main():
   """
 
   expression = initiate('cnf.txt')
-  #print(expression)
+  # print(expression)
   expression = cleanupBrackets(expression)
-  #print(expression)
+  print(expression)
 
   outputFormula = convertToCNF(expression)
   CNF = convertToClause("(" + outputFormula + ")")
@@ -753,7 +749,7 @@ def main():
 
   # for the map problem - add brackets to single atoms
   outputFormula = convertToClauseWithBrackets(outputFormula)
-  #print(outputFormula)
+  # print(outputFormula)
   return outputFormula
 
 
