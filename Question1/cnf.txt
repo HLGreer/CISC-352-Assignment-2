@@ -1,1 +1,1 @@
-A ^ BvC ->D
+(A^B)v(C^D)vE

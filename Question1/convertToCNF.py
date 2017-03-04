@@ -743,9 +743,9 @@ def main():
   """
 
   expression = initiate('cnf.txt')
-  # print(expression)
+  #print(expression)
   expression = cleanupBrackets(expression)
-  print(expression)
+  #print(expression)
 
   outputFormula = convertToCNF(expression)
   CNF = convertToClause("(" + outputFormula + ")")
