@@ -477,7 +477,7 @@ def distributeOrRule(input):
     # print(orIndex2)
     # print(usedRule)
     #print(input)
-    print("")
+    #("")
 
     if orIndex == -1 and orIndex2 == -1:
       break
