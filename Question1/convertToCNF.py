@@ -8,6 +8,7 @@ CNF Part written by:
 - Kyle Delaney
 """
 
+import glob
 
 def removeWhitespace(sentence):
   i = 0
@@ -737,8 +738,12 @@ def main():
       outputFormula = convertToClause("(" + outputFormula + ")")
       print("Output formula: " + outputFormula + "\n")
   """
+  txtFiles = glob.glob('./*.txt') #imports any file in directory with .txt extension
+  if './out.txt' in txtFiles:
+      txtFiles.remove('./out.txt') #removes if file called out.txt
+  fileIn = txtFiles[0]
+  expression = initiate(fileIn)
 
-  expression = initiate('cnf.txt')
   # print(expression)
   expression = cleanupBrackets(expression)
   print(expression)
@@ -746,6 +751,8 @@ def main():
   outputFormula = convertToCNF(expression)
   CNF = convertToClause("(" + outputFormula + ")")
   print("Output formula: " + CNF + "\n")
+  outFile = open("out.txt","w")
+  outFile.write(CNF)
 
   # for the map problem - add brackets to single atoms
   outputFormula = convertToClauseWithBrackets(outputFormula)
