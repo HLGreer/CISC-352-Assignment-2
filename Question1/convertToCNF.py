@@ -473,8 +473,8 @@ def distributeOrRule(input):
 
     # #
     # print (input[leftClauseOpenBracket: orIndex2-1])
-    # print (orIndex)
-    # print(orIndex2)
+    #print (orIndex)
+    #print(orIndex2)
     # print(usedRule)
     #print(input)
     #("")
@@ -482,7 +482,7 @@ def distributeOrRule(input):
     if orIndex == -1 and orIndex2 == -1:
       break
     elif usedRule == False and (orIndex == -1 or orIndex2 == -1) :
-      indexLastOrCheck = max(orIndex, orIndex2)
+      indexLastOrChecked = max(orIndex, orIndex2)
     elif orIndex == orIndex2 and usedRule == False:
       indexLastOrChecked = orIndex
     else: #usedRule == True:
