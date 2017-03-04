@@ -106,62 +106,62 @@ def initiate(filename):
 # index += len(substring) # since we're not searching for overlapping
 # occurrences
 
-
-def findRightmostClause(string):
-  length = len(string)
-
-  # if rightmost element is a close bracket, return the bracketed term
-  if string(length - 1) == ")":
-    countBrackets = 1
-
-    for i in range(length - 2, -1, -1):
-      if string[i] == "(":
-        countBrackets -= 1
-        if countBrackets == 0:
-          # we have found the open bracket corresponding to the last
-          # close bracket
-          clauseStartIndex = i
-          return string[clauseStartIndex: length]
-      if string[i] == ")":
-        # there are nested brackets
-        countBrackets += 1
-
-    # should have returned in loop above, otherwise error
-    print("***ERROR in findRightmostClause function")
-
-  # else, return the entire string as a clause
-  else:
-    return string
-
-
-def findLeftmostClause(string):
-  length = len(string)
-
-  # if rightmost element is a close bracket, return the bracketed term
-  if string(0) == "(":
-    countBrackets = 1
-
-    for i in range(length):
-      if string[i] == ")":
-        countBrackets -= 1
-        if countBrackets == 0:
-          # we have found the close bracket corresponding to the
-          # first open bracket
-          clauseEndIndex = i
-          return string[0: clauseEndIndex + 1]
-      if string[i] == "(":
-        # there are nested brackets
-        countBrackets += 1
-
-    # should have returned in loop above, otherwise error
-    print("***ERROR in findLeftmostClause function")
-  # else, return the entire string as a clause
-  else:
-    return string
-
-
-# if index is in a bracketed clause, return the clause (it may be part of a larger expression)
-# else, return None
+#
+# def findRightmostClause(string):
+#   length = len(string)
+#
+#   # if rightmost element is a close bracket, return the bracketed term
+#   if string(length - 1) == ")":
+#     countBrackets = 1
+#
+#     for i in range(length - 2, -1, -1):
+#       if string[i] == "(":
+#         countBrackets -= 1
+#         if countBrackets == 0:
+#           # we have found the open bracket corresponding to the last
+#           # close bracket
+#           clauseStartIndex = i
+#           return string[clauseStartIndex: length]
+#       if string[i] == ")":
+#         # there are nested brackets
+#         countBrackets += 1
+#
+#     # should have returned in loop above, otherwise error
+#     print("***ERROR in findRightmostClause function")
+#
+#   # else, return the entire string as a clause
+#   else:
+#     return string
+#
+#
+# def findLeftmostClause(string):
+#   length = len(string)
+#
+#   # if rightmost element is a close bracket, return the bracketed term
+#   if string(0) == "(":
+#     countBrackets = 1
+#
+#     for i in range(length):
+#       if string[i] == ")":
+#         countBrackets -= 1
+#         if countBrackets == 0:
+#           # we have found the close bracket corresponding to the
+#           # first open bracket
+#           clauseEndIndex = i
+#           return string[0: clauseEndIndex + 1]
+#       if string[i] == "(":
+#         # there are nested brackets
+#         countBrackets += 1
+#
+#     # should have returned in loop above, otherwise error
+#     print("***ERROR in findLeftmostClause function")
+#   # else, return the entire string as a clause
+#   else:
+#     return string
+#
+#
+# # if index is in a bracketed clause, return the clause (it may be part of a larger expression)
+# # else, return None
 
 
 def checkIfSurroundedByBrackets(string, index):
@@ -197,7 +197,7 @@ def checkIfSurroundedByBrackets(string, index):
   elif clauseStartIndex == None and clauseEndIndex == None:
     return None
   else:
-    print("***ERROR in checkIfSurroundedByBrackets")
+    #print("***ERROR in checkIfSurroundedByBrackets")
     return
 
 
@@ -357,134 +357,152 @@ def doubleNegationRule(input):
   input = input.replace("!!", "")
   return input
 
+def isClause(input):
+  #hoping everything will be in proper bracket format
+  if input.startswith('(') and findCorrespondingCloseBracket(input, 0) == len(input) - 1:
+    return True
+
+  if '(' not in input and ')' not in input and '^' not in input and 'v' not in input:
+    return True
+
+  return False
+
+def isAndMainOperatorInClause(string, clauseStart, clauseEnd):
+  #returns the index of AND if it is the main operator in clause, otherwise returns None
+  #print("is and main operator in clause...")
+  #print("string = " + string)
+  #print (clauseStart)
+  #print (clauseEnd)
+
+  numAndsInClause = string[clauseStart: clauseEnd+1].count('^')
+  #print (numAndsInClause)
+
+  if numAndsInClause == 0:
+    return None
+
+  lastAndIndexChecked = clauseStart
+  andIndex = None
+  leftOfAnd = None
+  rightOfAnd = None
+
+  for i in range(numAndsInClause):
+    andIndex = string.find('^', lastAndIndexChecked, clauseEnd+1)
+    #print ("andIndex")
+    #print(andIndex)
+    lastAndIndexChecked = andIndex
+    leftOfAnd = string[clauseStart+1:andIndex]
+    rightOfAnd = string[andIndex+1:clauseEnd]
+    #print ("leftOfAnd: ", leftOfAnd)
+    #print ("rightOfAnd: ", rightOfAnd)
+    if isClause(leftOfAnd) and isClause(rightOfAnd):
+      return andIndex
+
+  return None
 
 def distributeOrRule(input):
-  while (input.count("v") > 0):
-    i = 0
-    for character in input:
-      if character == 'v':
-        operatorIndex = i
-        operatorInClause = checkIfSurroundedByBrackets(input, operatorIndex)
-        # print(operatorIndex)
-        if operatorInClause == None:  # if not in brackets:
-          A = input[0: operatorIndex]
-          B = input[operatorIndex + 1: len(input)]
-          if input[operatorIndex - 1] == ')' and input[operatorIndex + 1] == '(':
-            A = convertToCNF(A)
-            B = convertToCNF(B)
-            A = A[1: -1]
-            B = B[1:-1]
-            # print(A)
-            # print(B)
-            if (A.count("^") == 0 and B.count("^") == 0):
-              output = "(" + A + "v" + B + ")"
-            elif (A.count("^") == 0 and B.count("^") > 0):
-              output = ""
-              while (B.count("^") > 0):
-                output = output + "(" + A + "v" + B[0:B.find("^")] + ")" + "^"
-                B = B[(B.find("^")) + 1:]
-              output = output + "(" + A + "v" + B + ")"
-            elif (A.count("^") > 0 and B.count("^") == 0):
-              output = ""
-              while (A.count("^") > 0):
-                output = output + "(" + A[A.find("^") - 1] + "v" + B + ")" + "^"
-                A = A[(A.find("^")) + 1:]
-              output = output + "(" + A + "v" + B + ")"
-            elif (A.count("^") > 0 and B.count("^") > 0):
-              output = ""
-              while (A.count("^") > 0):
-                temp = B
-                while (temp.count("^") > 0):
-                  output = output + "(" + A[0:A.find("^")] + "v" + temp[0:temp.find("^")] + ")" + "^"
-                  temp = temp[(temp.find("^")) + 1:]
-                output = output + "(" + A[0:A.find("^")] + "v" + temp + ")" + "^"
-                A = A[(A.find("^")) + 1:]  # A reaches one last
-              # output = output + "^"
-              while (B.count("^") > 0):
-                output = output + "(" + A + "v" + B[0:B.find("^")] + ")" + "^"
-                B = B[(B.find("^")) + 1:]
-              output = output + "(" + A + "v" + B + ")"
-            return output
-          elif input[operatorIndex - 1] == ')' and input[operatorIndex + 1] != '(':
-            A = A[1: -1]
-            A = convertToCNF(A)
-            output = ""
-            while (A.count("^") > 0):
-              operatorIndex2 = A.find("^")
-              output = output + "(" + A[0:operatorIndex2] + "v" + B + ")" + "^"
-              A = A[operatorIndex2 + 1: len(A)]
-            output = output + "(" + A + "v" + B + ")"
-            return output
-          elif input[operatorIndex - 1] != ')' and input[operatorIndex + 1] == '(':
-            B = B[1: -1]
-            # print(B)
-            B = convertToCNF(B)
-            # print(B)
-            output = ""
-            while (B.count("^") > 0):
-              operatorIndex2 = B.find("^")
-              output = output + "(" + A + "v" + B[0:operatorIndex2] + ")" + "^"
-              B = B[operatorIndex2 + 1: len(B)]
-            output = output + "(" + A + "v" + B + ")"
-            return output
-          else:
-            i = i + 1
-            continue
-        else:
-          # input = input[1:-1]
-          i = i + 1
-          continue
+  if input.find("^") == -1:
+    return input
+  #rule: A v (B ^ C) = (A v B) ^ (A v C)
+
+  indexLastOrChecked = -1
+
+  while(True):
+
+    usedRule = False
+
+    #check if of form Av(B^C)
+    orIndex = input.find("v(", indexLastOrChecked + 1, len(input))
+    #orIndex = input.find("v(")
+
+    if orIndex != -1:
+      #indexLastOrChecked = orIndex
+      orInClause = checkIfSurroundedByBrackets(input, orIndex)
+      left = "" #leftOfClause
+      right = "" #rightOfClause
+      leftOuterBracket = -1
+      rightOuterBracket = len(input)
+      if orInClause != None:
+        leftOuterBracket = orInClause[0]
+        rightOuterBracket = orInClause[1]
+        left = input[:leftOuterBracket]
+        right = input[rightOuterBracket + 1 :]
+
+      rightClauseCloseBracket = findCorrespondingCloseBracket(input, orIndex+1)
+      mainAndIndex = isAndMainOperatorInClause(input, orIndex+1, rightClauseCloseBracket)
+
+      if mainAndIndex == None: # right side is not of form (B^C); look at next or
+        #print ("and is not main operator in clause")
+        pass
       else:
-        i = i + 1
-        continue
+        #it's of form Av(B^C)
+
+        A = input[leftOuterBracket + 1:orIndex]
+        B = input[orIndex+2:mainAndIndex]
+        C = input[mainAndIndex + 1: rightClauseCloseBracket]
+
+        input = left + "(((" + A + ")v(" + B + "))^((" + A + ")v(" + C + ")))" + right
+        usedRule = True
+
+
+    #check if of form left+((B^C)vA)+right
+    orIndex2 = input.find(")v", indexLastOrChecked + 1, len(input))
+    #orIndex2 = input.find(")v")
+
+    if orIndex2 != -1:
+      orIndex2 = orIndex2 + 1 #to get rid of bracket
+      #indexLastOrChecked = orIndex2
+
+      orInClause = checkIfSurroundedByBrackets(input, orIndex2)
+      left = "" #leftOfClause
+      right = "" #rightOfClause
+      leftOuterBracket = -1
+      rightOuterBracket = len(input)
+      if orInClause != None:
+        leftOuterBracket = orInClause[0]
+        rightOuterBracket = orInClause[1]
+        left = input[:leftOuterBracket]
+        right = input[rightOuterBracket + 1 :]
+
+
+      leftClauseOpenBracket = findCorrespondingOpenBracket(input, orIndex2 - 1)
+      mainAndIndex = isAndMainOperatorInClause(input, leftClauseOpenBracket, orIndex2-1)
+      #print(leftClauseOpenBracket)
+      #print(orIndex2 - 1)
+
+      if mainAndIndex == None: # right side is not of form (B^C); look at next or
+        #print ("and is not main operator in clause")
+        pass
+      else:
+        #it's of form left+((B^C)vA)+right
+
+        A = input[orIndex2 + 1 : rightOuterBracket]
+        B = input[leftClauseOpenBracket + 1:mainAndIndex]
+        C = input[mainAndIndex + 1: orIndex2-1]
+
+        input = left + "(((" + A + ")v(" + B + "))^((" + A + ")v(" + C + ")))" + right
+        usedRule = True
+
+
+    if orIndex == -1 and orIndex2 == -1:
+      break
+    elif usedRule == False and (orIndex == -1 or orIndex2 == -1) :
+      indexLastOrCheck = max(orIndex, orIndex2)
+    elif orIndex == orIndex2 and usedRule == False:
+      indexLastOrChecked = orIndex
+    else: #usedRule == True:
+      indexLastOrChecked = -1 #reset
+
+    #print ("test: " + input)
+    input = cleanupBrackets(input)
+    #print ("after cleanup brackets: " + input)
+
+  #once more after loop
+  #print ("test: " + input)
+  input = cleanupBrackets(input)
+  #print ("after cleanup brackets: " + input)
 
   return input
 
-
-def andResolution(input):
-  i = 0
-  for character in input:
-    if character == '^':
-      operatorIndex = i
-      operatorInClause = checkIfSurroundedByBrackets(input, operatorIndex)
-      # print(operatorIndex)
-      if operatorInClause == None:  # if not in brackets:
-        A = input[0: operatorIndex]
-        B = input[operatorIndex + 1: len(input)]
-        if input[operatorIndex - 1] == ')' and input[operatorIndex + 1] == '(':
-          # print(A)
-          # print(B)
-          A = A[1: -1]
-          B = B[1:-1]
-          A = convertToCNF(A)
-          B = convertToCNF(B)
-          # print(A)
-          # print(B)
-          output = A + "^" + B
-
-        elif input[operatorIndex - 1] == ')' and input[operatorIndex + 1] != '(':
-          A = A[1: -1]
-          A = convertToCNF(A)
-
-          output = "(" + A + ")" + "^" + B
-
-        elif input[operatorIndex - 1] != ')' and input[operatorIndex + 1] == '(':
-          B = B[1: -1]
-          B = convertToCNF(B)
-
-          output = A + "^" + "(" + B + ")"
-
-        else:
-          i = i + 1
-        continue
-      else:
-        # input = input[1:-1]
-        i = i + 1
-        continue
-    else:
-      i = i + 1
-      continue
-  return output
 
 
 # converts to clause form
@@ -563,10 +581,16 @@ def convertToCNF(input):
     input = doubleNegationRule(input)
     print ("result after double negation rule: " + input)
 
-  if ")^(" in input:
-    input = andResolution(input)
+  # if ")^(" in input:
+  #   input = andResolution(input)
 
   if "v(" in input or ")v" in input:
+
+    #for i in range(5):
+
+    input = cleanupBrackets(input)
+    #print ("after cleaning up brackets: " + input)
+
     input = "(" + distributeOrRule(input) + ")"
     print ("result after distribute or rule: " + input)
 
@@ -719,7 +743,7 @@ def main():
   """
 
   expression = initiate('cnf.txt')
-  print(expression)
+  # print(expression)
   expression = cleanupBrackets(expression)
   print(expression)
 
@@ -729,7 +753,7 @@ def main():
 
   # for the map problem - add brackets to single atoms
   outputFormula = convertToClauseWithBrackets(outputFormula)
-  # print(outputFormula)
+  #print(outputFormula)
   return outputFormula
 
 
