@@ -18,24 +18,41 @@ def loadTextfile(textfile):
 def cnfToList(cnfStr):
     noSquigMatch = re.match(r'\{(.*)\}', cnfStr)
     noSquig = noSquigMatch.group(1)
+    print "inside curly brackets:"
+    print noSquig
     splitArr = re.findall(r'\(([^)]*)\)', noSquig)
+    print splitArr
     for i in range(0,len(splitArr)):
         splitArr[i] = splitArr[i].split(',')
+    print splitArr
     return splitArr
 
 #import function from Question 1
 def CNF(predicate):
     import sys, os
     sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Question1'))
-    from convertToCNF import convertToCNF
-    output = convertToCNF(predicate)
+    from convertToCNF import *
+    predicateNW = removeWhitespace(predicate)
+    print "after wS:"
+    print predicateNW
+    if (predicateNW[0] != '('):
+        predicateNW = groupByOperatorPrecedence(predicateNW)
+    print "after precedence and rm ws:"
+    print predicateNW
+    expression = cleanupBrackets(predicateNW)
+    print "after cleanupbrackets:"+expression
+    output = convertToCNF(predicateNW)
+    print "output from convertToCNF:"
+    print output
     #ensures atoms are put in parentheses
+    return convertToClauseWithBrackets(output)
+    '''
     if len(output) > 4:
         return '{' + convertToClause_PBR('(' + output + ')') + '}'
     elif len(output) == 4:
         return '{' + output + '}'
     return '{' + '(' + output + ')' + '}'
-
+    '''
 
 def negateL(l):
     if "!" in  l:
@@ -171,18 +188,22 @@ def main():
     fileIn = txtFiles[0]
     predicates = loadTextfile(fileIn)
     finalCNF = []
-    concRE = re.compile('Therefore\,\s+(.*)\.')
-    print(predicates)
+    concRE = re.compile('Therefore\,\s*(.*)\.')
+    print "Predicates:"
+    print predicates
     for i in range(0, len(predicates)):
         conclusion = concRE.match(predicates[i]) #check if matches regex for conclusion.
         if conclusion:
             predicates[i] = "!(" + conclusion.group(1) + ")" #Negate the conclusion
-        predicates[i].replace(" ","")
-        print(predicates[i] + " after: " + CNF(predicates[i]))
+        predicates[i] = predicates[i].replace(" ","")
+        print "after removing whitespace:"+predicates[i]+"."
+        print(predicates[i] + " after CNF: " + CNF(predicates[i]))
         finalCNF += cnfToList(CNF(predicates[i]))
-        print(finalCNF)
+        print "FinalCNF:"
+        print finalCNF
 
-    print(finalCNF)
+    print"CNF after all conversions:" 
+    print finalCNF
     sat = dpll(finalCNF) #runs the dpll algorithm
     outFile = open("out.txt","w")
     if sat:
