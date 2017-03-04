@@ -1,2 +1,1 @@
-!Av!B^!CvD
-
+A ^ BvC ->D
