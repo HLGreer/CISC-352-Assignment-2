@@ -486,7 +486,7 @@ def distributeOrRule(input):
     if orIndex == -1 and orIndex2 == -1:
       break
     elif usedRule == False and (orIndex == -1 or orIndex2 == -1) :
-      indexLastOrCheck near ted = max(orIndex, orIndex2)
+      indexLastOrCheck = max(orIndex, orIndex2)
     elif orIndex == orIndex2 and usedRule == False:
       indexLastOrChecked = orIndex
     else: #usedRule == True:
